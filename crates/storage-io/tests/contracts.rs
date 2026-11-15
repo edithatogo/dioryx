@@ -2,9 +2,9 @@
 mod rejecting_writer;
 mod support;
 
+use dioryx_storage::*;
 use rejecting_writer::RejectingWriter;
 use std::sync::Arc;
-use storage_io::*;
 use support::TempFile;
 
 #[test]

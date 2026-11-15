@@ -35,6 +35,76 @@ CONTRACTS = {
 }
 
 
+# Directory names stay stable; package/library names are the public namespace.
+PACKAGES = {
+    "storage-io": "dioryx-storage",
+    "container-core": "dioryx-containers",
+    "volume-core": "dioryx-volumes",
+    "transform-core": "dioryx-transforms",
+    "semantics-core": "dioryx-semantics",
+    "fs-core": "dioryx-vfs",
+}
+
+
+def check_namespace(root: Path) -> list[str]:
+    """Validate manifests and local lock entries without resolving dependencies."""
+    errors = []
+    try:
+        workspace = tomllib.loads((root / "Cargo.toml").read_text())["workspace"]
+        members = workspace["members"]
+        expected = {f"crates/{directory}" for directory in PACKAGES}
+        if not isinstance(members, list) or len(members) != len(expected) or set(members) != expected:
+            errors.append("workspace membership differs from the reviewed six-crate inventory")
+        if workspace["package"].get("publish") is not False:
+            errors.append("workspace publish must remain false")
+        for directory, name in PACKAGES.items():
+            package = tomllib.loads((root / "crates" / directory / "Cargo.toml").read_text())["package"]
+            if package["name"] != name:
+                errors.append(f"package name mismatch: {directory} must be {name}")
+            if package.get("publish") != {"workspace": True}:
+                errors.append(f"publish must inherit the disabled workspace policy: {directory}")
+        for directory in ("storage-io", "semantics-core"):
+            name = PACKAGES[directory]
+            if workspace["dependencies"].get(name) != {"path": f"crates/{directory}"}:
+                errors.append(f"internal dependency mapping mismatch: {name}")
+        lock = tomllib.loads((root / "Cargo.lock").read_text())
+        local = [p for p in lock["package"] if "source" not in p]
+        if len(local) != len(PACKAGES) or {p["name"] for p in local} != set(PACKAGES.values()):
+            errors.append("local lockfile packages differ from the namespace inventory")
+        for package in local:
+            if any(dep in PACKAGES for dep in package.get("dependencies", [])):
+                errors.append(f"legacy dependency in lockfile: {package['name']}")
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        errors.append(f"invalid namespace manifest/lockfile: {error}")
+    return errors
+
+
+def check_cargo_metadata(metadata: dict, root: Path) -> list[str]:
+    """Validate real `cargo metadata --locked --no-deps` output when supplied."""
+    errors = []
+    try:
+        packages = metadata["packages"]
+        if len(packages) != len(PACKAGES) or {p["name"] for p in packages} != set(PACKAGES.values()):
+            return ["Cargo metadata package inventory differs from the namespace mapping"]
+        members = metadata["workspace_members"]
+        if len(members) != len(PACKAGES) or set(members) != {p["id"] for p in packages}:
+            errors.append("Cargo metadata workspace members differ from the package inventory")
+        directories = {name: directory for directory, name in PACKAGES.items()}
+        for package in packages:
+            name = package["name"]
+            expected_path = root / "crates" / directories[name] / "Cargo.toml"
+            if Path(package["manifest_path"]).resolve() != expected_path.resolve():
+                errors.append(f"Cargo metadata manifest path mismatch: {name}")
+            libraries = [t["name"] for t in package["targets"] if "lib" in t["kind"]]
+            if libraries != [name.replace("-", "_")]:
+                errors.append(f"Cargo metadata library target mismatch: {name}")
+            if package["source"] is not None or package["publish"] != []:
+                errors.append(f"Cargo metadata must describe unpublished local packages: {name}")
+    except (ValueError, KeyError, TypeError) as error:
+        errors.append(f"invalid Cargo metadata: {error}")
+    return errors
+
+
 def declaration(source: str, name: str) -> str:
     pattern = rf"^pub (?:struct|enum|trait|type|fn) {re.escape(name)}\b"
     found = re.search(pattern, source, flags=re.MULTILINE)
@@ -68,7 +138,7 @@ def blocks() -> str:
 
 
 def check() -> list[str]:
-    errors = []
+    errors = check_namespace(ROOT)
     manifest = tomllib.loads((ROOT / "Cargo.toml").read_text())
     members = manifest["workspace"]["members"]
     expected = {f"crates/{name}" for name in CONTRACTS}
@@ -77,8 +147,6 @@ def check() -> list[str]:
     for member in members:
         path = ROOT / member
         package = tomllib.loads((path / "Cargo.toml").read_text())
-        if package["package"]["name"] != path.name:
-            errors.append(f"crate name mismatch: {member}")
         source = (path / "src/lib.rs").read_text()
         if "#![forbid(unsafe_code)]" not in source:
             errors.append(f"unsafe policy missing: {member}")
@@ -144,6 +212,7 @@ def check() -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sync-design", action="store_true")
+    parser.add_argument("--cargo-metadata", help="Cargo metadata JSON path, or - for stdin")
     args = parser.parse_args()
     if args.sync_design:
         path = ROOT / "DESIGN.md"
@@ -161,11 +230,17 @@ def main() -> int:
             raise ValueError("design contract insertion point missing")
         path.write_text(text)
     failures = check()
+    if args.cargo_metadata:
+        try:
+            text = sys.stdin.read() if args.cargo_metadata == "-" else Path(args.cargo_metadata).read_text()
+            failures.extend(check_cargo_metadata(json.loads(text), ROOT))
+        except (OSError, ValueError) as error:
+            failures.append(f"invalid Cargo metadata input: {error}")
     if failures:
         for failure in failures:
             print(f"ERROR: {failure}", file=sys.stderr)
         return 1
-    print("Contract declarations, links, track DAG, core boundaries and Conductor pin: OK")
+    print("Contract declarations, namespace, links, track DAG, core boundaries and Conductor pin: OK")
     return 0
 
 

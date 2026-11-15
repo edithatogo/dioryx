@@ -1,8 +1,8 @@
 #![forbid(unsafe_code)]
 //! Checked logical volume slices. Partition-table and pool discovery are not implemented.
 
+use dioryx_storage::{BlockDevice, Geometry, StorageCapabilities, StorageError};
 use std::sync::Arc;
-use storage_io::{BlockDevice, Geometry, StorageCapabilities, StorageError};
 use thiserror::Error;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -37,7 +37,7 @@ pub struct SliceDevice {
 
 impl SliceDevice {
     pub fn new(source: Arc<dyn BlockDevice>, offset: u64, len: u64) -> Result<Self, StorageError> {
-        storage_io::validate_device(source.as_ref())?;
+        dioryx_storage::validate_device(source.as_ref())?;
         let upstream = source.geometry();
         if !offset.is_multiple_of(u64::from(upstream.logical_sector())) {
             return Err(StorageError::Misaligned);
@@ -75,7 +75,7 @@ impl BlockDevice for SliceDevice {
             .ok_or(StorageError::OutOfBounds)?;
         self.source.read_exact_at(absolute, output)
     }
-    fn writable(&self) -> Option<&dyn storage_io::WritableBlockDevice> {
+    fn writable(&self) -> Option<&dyn dioryx_storage::WritableBlockDevice> {
         None
     }
 }
@@ -105,7 +105,7 @@ impl VolumePool for SingleVolumePool {
         if id != self.id {
             return Err(VolumeError::NotFound);
         }
-        storage_io::validate_device(self.device.as_ref())?;
+        dioryx_storage::validate_device(self.device.as_ref())?;
         Ok(Arc::clone(&self.device))
     }
 }

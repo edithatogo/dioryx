@@ -1,5 +1,5 @@
 [package]
-name = "semantics-core"
+name = "dioryx-semantics"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

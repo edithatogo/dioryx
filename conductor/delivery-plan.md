@@ -16,7 +16,7 @@ filesystem, general-purpose database, dynamic plugin ABI or parallel planning sy
 track's `plan.md` own executable tasks; this document is the delivery and priority
 view, not another task checklist.
 
-## 1. Baseline and status
+## 1. Historical planning baseline and current execution
 
 The input is the supplied Universal FS revision 0.2 archive, not a live remote.
 The original seed receipt reports 19 tests at bootstrap commit
@@ -26,7 +26,9 @@ unchanged in this documentation revision. Nothing is remotely created or publish
 
 The first implementation action is to reproduce the pinned baseline. Do not build
 new work on an assumed toolchain, dependency API or historical green receipt.
-The proposed Dioryx package rename is a mechanical task, not performed here.
+That planning revision did not perform the rename. Current namespace execution
+and exact-head gates are recorded in [track 001/r0](tracks/track-001-workspace-and-core-traits/plan.md);
+its status supersedes only those historical implementation statements, not their evidence.
 
 ## 2. Choose vertical delivery over infrastructure completion
 

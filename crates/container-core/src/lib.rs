@@ -1,8 +1,8 @@
 #![forbid(unsafe_code)]
 //! Container interface and real raw-image passthrough. UDIF is a later admission gate.
 
+use dioryx_storage::BlockDevice;
 use std::sync::Arc;
-use storage_io::BlockDevice;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -12,7 +12,7 @@ pub enum ContainerError {
     #[error("unsupported container feature: {0}")]
     Unsupported(&'static str),
     #[error(transparent)]
-    Storage(#[from] storage_io::StorageError),
+    Storage(#[from] dioryx_storage::StorageError),
 }
 
 pub trait Container: Send + Sync {
@@ -42,7 +42,7 @@ impl Container for RawContainer {
         if index != 0 {
             return Err(ContainerError::DiskNotFound);
         }
-        storage_io::validate_device(self.source.as_ref())?;
+        dioryx_storage::validate_device(self.source.as_ref())?;
         Ok(Arc::clone(&self.source))
     }
 }

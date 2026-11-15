@@ -1,6 +1,6 @@
 //! Test-only capability/failure double. It never claims successful persistence.
+use dioryx_storage::*;
 use std::path::Path;
-use storage_io::*;
 
 pub struct RejectingWriter {
     pub file: FileDevice,

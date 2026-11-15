@@ -7,7 +7,7 @@
 
 ## Global constraints and task cycle
 
-All new work below is pending. Existing directory paths remain stable; the proposed
+R0 execution status is recorded below; other new work remains pending. Existing directory paths remain stable; the proposed
 package names are in [identity](../../../docs/identity.md). No empty packages, new
 public ABI, unqualified writer, mock filesystem evidence or dependency safety waiver.
 
@@ -37,8 +37,8 @@ Files: `Cargo.toml`, six existing crate manifests, `Cargo.lock`,
 `scripts/check_contracts.py`, new `scripts/tests/test_check_contracts.py`, and
 only affected namespace documentation. No production behavior change in this phase.
 
-- [ ] **R0.1 Reproduce the baseline.** Run unchanged G on the supplied exact tree; record actual compiler/target and lock resolution. A missing compiler/dependency is blocked, not repaired by silently changing pins. Reconcile any failure before feature work.
-- [ ] **R0.2 Mechanical namespace migration.** First make a manifest/mapping regression fail for the proposed six names. Rename existing packages using the explicit identity table, keep directories and internal dependency aliases deliberate, regenerate the lockfile with Cargo and update the checker's mapping. G plus `cargo metadata --locked --no-deps` must show only the intended package changes. No new umbrella/CLI crate.
+- [x] **R0.1 Reproduce the baseline.** Run unchanged G on the supplied exact tree; record actual compiler/target and lock resolution. A missing compiler/dependency is blocked, not repaired by silently changing pins. Reconcile any failure before feature work.
+- [~] **R0.2 Mechanical namespace migration.** First make a manifest/mapping regression fail for the proposed six names. Rename existing packages using the explicit identity table, keep directories and internal dependency aliases deliberate, regenerate the lockfile with Cargo and update the checker's mapping. G plus `cargo metadata --locked --no-deps` must show only the intended package changes. No new umbrella/CLI crate.
 - [ ] **R0.3 Phase/profile validation.** Add failing `unknown_phase_rejected`, `phase_cycle_rejected`, `profile_cannot_reference_missing_gate` and `historical_pass_cannot_promote_current_profile` and `different_target_or_mode_cannot_satisfy_edge`. Extend the existing checker and its Python tests; preserve compiled-declaration matching. Run `python3 -m unittest discover -s scripts/tests` plus G. Metadata edges are data, not completion evidence.
 
 ## p2 — Minimal read-only source/view/budget contracts
@@ -124,4 +124,28 @@ with Gemini CLI installed. This closes the bootstrap phase only.
 
 ## Revision 0.3 status
 
-All tasks except the historical seed remain pending. [Revision evidence](revision-0.3.md) records static checks and the unavailable Cargo toolchain.
+The revision-0.3 receipt below is historical. Current R0 execution is recorded in this plan; other feature tasks remain pending. [Revision evidence](revision-0.3.md) records static checks and the unavailable Cargo toolchain.
+
+## R0 execution — sole integration owner
+
+Owner: this existing Dioryx integration chat, explicitly retained by Dylan. No
+additional chats/workers are authorised. Reconciled live main
+`f4bb9d38b371375e31e418838b958a4bad4b14a8`, all branches/PRs/issues and track owners
+on 15 November 2026. PR #2 owns only `renovate.json` and remains untouched.
+The durable scope claim is in PR #1 comment 6893339865.
+
+R0.1: freshly rerun Core contracts run 43700815288 on the exact imported main
+passed all three hosts. Locally reconstructed tree
+`30d613ef47f14656a6a6da7a3eb3a4d5fe74034c` matches GitHub; contract validation passed.
+Local Cargo remains unavailable, so hosted execution is required for every head.
+
+R0.2: mechanical six-package/import migration; directories, public behavior,
+external dependency versions/checksums, compiler and Conductor pin are unchanged.
+Namespace regressions were first run on the baseline: 10 failed as expected.
+The staged lockfile rename is provisional until hosted Cargo regenerates identical
+bytes under `--offline --locked`; locked check/test and real Cargo metadata are
+mandatory. No task is complete until its exact-head review and G pass.
+
+R0.3 will be split after R0.2: graph/shape validation first, scoped prerequisite
+matching second. Regression tests live under `scripts/tests`; validator code stays
+under `scripts`. Static metadata validity never qualifies a runtime profile.

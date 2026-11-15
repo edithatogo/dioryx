@@ -13,7 +13,7 @@ The seed deliberately contains six useful core crates. Backend, CLI and mount
 crate directories become Cargo members only when their first real operation
 and its tests exist. An interface contract is not filesystem support.
 
-| Crate | Initial responsibility | Planned addition |
+| Source directory | Initial responsibility | Planned addition |
 | --- | --- | --- |
 | `storage-io` | Read-only regular-file device; bounds and durability contracts | Raw-device shims, positional cursor adapters, read cache, write batches |
 | `container-core` | Raw-container identity adapter and container contract | Validated UDIF unwrapping |
@@ -22,7 +22,9 @@ and its tests exist. An interface contract is not filesystem support.
 | `semantics-core` | Raw-name policy, NFC/NFD utilities and timestamp types | OS projection, identity maps and AppleDouble policy |
 | `fs-core` | Capability negotiation, VFS contracts and bounded probing | Backend registry integration and stable mounted identity |
 
-`fs-core` depends on our contracts, never on a mount crate. Backends consume
+The directory names above are stable. Their current Cargo names are in the
+[namespace map](../docs/identity.md); for example, `fs-core` is package `dioryx-vfs`.
+`dioryx-vfs` depends on our contracts, never on a mount crate. Backends consume
 logical storage and implement `VirtualFs`. Frontends consume `VirtualFs`; the
 CLI is the composition root. Container, partition, pool and transform layers
 may recur where a format requires nesting. ISO9660 and UDF are filesystems,
@@ -170,7 +172,8 @@ candidates per subsystem at a time, after source screening. Retain the small I/O
 seed until a replacement wins on concrete semantics and maintenance. Caching,
 framework migration and broad transform adoption do not gate the first APFS proof.
 The proposed `dioryx-*` names are mapped in [identity](../docs/identity.md); no current
-package or lockfile is renamed by this document.
+package is created merely by this document. The six existing package names were
+migrated in track 001/r0; the lockfile changes only those local identities.
 
 Cargo features are additive code-selection mechanisms, not permission controls.
 Test read-only behavior with writers enabled in the resolved feature graph. A redb

@@ -1,8 +1,8 @@
 #[path = "../../storage-io/tests/support/mod.rs"]
 mod support;
 
-use fs_core::*;
-use storage_io::FileDevice;
+use dioryx_storage::FileDevice;
+use dioryx_vfs::*;
 
 #[test]
 fn a_read_only_layer_denies_write_requests() -> Result<()> {

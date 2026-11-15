@@ -1,9 +1,9 @@
 #![forbid(unsafe_code)]
 //! Mount-independent filesystem contracts, capability negotiation, and bounded probes.
 
-use semantics_core::{RawName, Timestamp};
+use dioryx_semantics::{RawName, Timestamp};
+use dioryx_storage::{BlockDevice, StorageError};
 use std::collections::{BTreeSet, HashSet};
-use storage_io::{BlockDevice, StorageError};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -25,7 +25,7 @@ pub enum FsError {
     #[error(transparent)]
     Storage(#[from] StorageError),
     #[error(transparent)]
-    Semantics(#[from] semantics_core::SemanticsError),
+    Semantics(#[from] dioryx_semantics::SemanticsError),
 }
 
 pub type Result<T> = std::result::Result<T, FsError>;
