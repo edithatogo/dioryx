@@ -1,0 +1,74 @@
+{
+  "track_id": "track-003-exfat-read-write-engine",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-11-15T02:53:03Z",
+  "updated_at": "2026-11-15",
+  "description": "exFAT read reuse, overlay mutation and independent direct-write qualification",
+  "repositories": [
+    "."
+  ],
+  "dependencies": [
+    "track-001-workspace-and-core-traits"
+  ],
+  "owners": [],
+  "decisions": [
+    "Read-only baseline work may proceed after track 001; track 002 dependency applies to write mounts.",
+    "embedded-exfat remains conditional on upstream unsafe-code admission.",
+    "Ordered writes do not establish journaled or universal power-fail atomic transactions.",
+    "Both fsck.exfat and Windows chkdsk evidence are required for accepted writes."
+  ],
+  "verification": {
+    "status": "not_run",
+    "scope": "Planned feature; documentation-only revision, no current-head runtime qualification."
+  },
+  "dependency_semantics": "Phase edges require accepted common-interface evidence plus any matching target/profile evidence. Aggregate phase status is not a substitute for scoped acceptance; a qualified host lane may proceed while other host lanes remain pending.",
+  "phases": [
+    {
+      "id": "p1",
+      "name": "exFAT read adapter and bounded engine selection",
+      "status": "pending",
+      "depends_on": [
+        "track-001-workspace-and-core-traits#p2",
+        "track-001-workspace-and-core-traits#p4",
+        "track-006-conformance-and-release#p1"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p2",
+      "name": "Overlay-only mutations",
+      "status": "pending",
+      "depends_on": [
+        "track-003-exfat-read-write-engine#p1",
+        "track-001-workspace-and-core-traits#p6",
+        "track-005-overlay-and-recovery#p2"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p3",
+      "name": "Independent writer fault qualification",
+      "status": "pending",
+      "depends_on": [
+        "track-003-exfat-read-write-engine#p2",
+        "track-005-overlay-and-recovery#p3",
+        "track-006-conformance-and-release#p1"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p4",
+      "name": "Per-host direct writes and mounts",
+      "status": "pending",
+      "depends_on": [
+        "track-003-exfat-read-write-engine#p3",
+        "track-002-apfs-readonly-and-mount#p3",
+        "track-006-conformance-and-release#p3"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    }
+  ],
+  "planning_revision": "0.3",
+  "update_time_precision": "date"
+}

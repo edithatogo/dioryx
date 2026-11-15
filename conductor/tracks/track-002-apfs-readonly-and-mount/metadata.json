@@ -1,0 +1,70 @@
+{
+  "track_id": "track-002-apfs-readonly-and-mount",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-11-15T02:53:03Z",
+  "updated_at": "2026-11-15",
+  "description": "Native APFS proof, mountless delivery and separately qualified read mounts",
+  "repositories": [
+    "."
+  ],
+  "dependencies": [
+    "track-001-workspace-and-core-traits"
+  ],
+  "owners": [],
+  "decisions": [
+    "Prove real APFS reads before authoring a backend wrapper.",
+    "Sparseimage provenance and snapshot-bearing fixtures do not imply sparseimage or snapshot browsing support.",
+    "Each mount platform and upstream adapter behavior requires separate runtime qualification."
+  ],
+  "verification": {
+    "status": "not_run",
+    "scope": "Planned feature; documentation-only revision, no current-head runtime qualification."
+  },
+  "dependency_semantics": "Phase edges require accepted common-interface evidence plus any matching target/profile evidence. Aggregate phase status is not a substitute for scoped acceptance; a qualified host lane may proceed while other host lanes remain pending.",
+  "phases": [
+    {
+      "id": "p1",
+      "name": "Direct native APFS proof",
+      "status": "pending",
+      "depends_on": [
+        "track-001-workspace-and-core-traits#r0",
+        "track-006-conformance-and-release#p1"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p2",
+      "name": "APFS VFS and mountless CLI",
+      "status": "pending",
+      "depends_on": [
+        "track-002-apfs-readonly-and-mount#p1",
+        "track-001-workspace-and-core-traits#p3",
+        "track-001-workspace-and-core-traits#p4"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p3",
+      "name": "Read frontend contract",
+      "status": "pending",
+      "depends_on": [
+        "track-002-apfs-readonly-and-mount#p2",
+        "track-001-workspace-and-core-traits#p5"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p4",
+      "name": "Per-host image read mounts",
+      "status": "pending",
+      "depends_on": [
+        "track-002-apfs-readonly-and-mount#p3",
+        "track-006-conformance-and-release#p2"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    }
+  ],
+  "planning_revision": "0.3",
+  "update_time_precision": "date"
+}
