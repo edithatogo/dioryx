@@ -1,0 +1,9 @@
+/target/
+**/target/
+/artifacts/
+/tests/fixtures/local/
+/tests/fixtures/generated/
+/fuzz/corpus/
+/fuzz/artifacts/
+*.profraw
+.DS_Store
