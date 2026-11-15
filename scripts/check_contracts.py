@@ -11,6 +11,8 @@ import subprocess
 import sys
 import tomllib
 
+from conductor_graph import check as check_phase_profiles
+
 ROOT = Path(__file__).resolve().parents[1]
 PIN = "7a5c560a4fdf5297be58594cc37527eb12790272"
 CONTRACTS = {
@@ -163,34 +165,7 @@ def check() -> list[str]:
             if not (path.parent / target).exists():
                 errors.append(f"broken link in {path.relative_to(ROOT)}: {target}")
 
-    tracks = {}
-    for metadata in (ROOT / "conductor/tracks").glob("*/metadata.json"):
-        item = json.loads(metadata.read_text())
-        if item["track_id"] != metadata.parent.name:
-            errors.append(f"track ID mismatch: {metadata}")
-        tracks[item["track_id"]] = item
-        for required in ("index.md", "spec.md", "plan.md"):
-            if not (metadata.parent / required).is_file():
-                errors.append(f"missing track file: {metadata.parent / required}")
-    active, finished = set(), set()
-
-    def visit(track: str) -> None:
-        if track in active:
-            errors.append(f"cyclic track dependency: {track}")
-            return
-        if track in finished:
-            return
-        active.add(track)
-        for dependency in tracks[track].get("dependencies", []):
-            if dependency not in tracks:
-                errors.append(f"unknown dependency: {track} -> {dependency}")
-            else:
-                visit(dependency)
-        active.remove(track)
-        finished.add(track)
-
-    for track in tracks:
-        visit(track)
+    errors.extend(check_phase_profiles(ROOT))
     content = (ROOT / "DESIGN.md").read_text()
     expected_blocks = blocks()
     start = "<!-- BEGIN COMPILED CONTRACTS -->\n"
@@ -240,7 +215,7 @@ def main() -> int:
         for failure in failures:
             print(f"ERROR: {failure}", file=sys.stderr)
         return 1
-    print("Contract declarations, namespace, links, track DAG, core boundaries and Conductor pin: OK")
+    print("Contract declarations, namespace, links, phase/profile DAG, core boundaries and Conductor pin: OK")
     return 0
 
 

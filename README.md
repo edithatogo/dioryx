@@ -64,8 +64,8 @@ mount/write infrastructure. exFAT validates reuse of the read API before stabili
 
 The initial repository import preserves the v0.3 workspace, including all six
 Conductor tracks and the original Rust source, manifests, lockfile, toolchain and
-pinned Conductor checkout. The package namespace migration is implemented; phase/profile validation and
-subsequent filesystem features remain explicit implementation tasks; no future backend or frontend crate is fabricated.
+pinned Conductor checkout. The package namespace migration and structural phase/profile validator are implemented;
+scoped evidence matching and filesystem features remain explicit implementation tasks; no future backend or frontend crate is fabricated.
 
 See the [repository import record](conductor/tracks/track-001-workspace-and-core-traits/repository-import.md)
 for provenance and verification boundaries, and the GitHub Actions results on the
@@ -87,3 +87,13 @@ to this workspace (`publish = false`).
 offline lockfile regeneration after the build, and validation of actual Cargo
 metadata. No native-fixture, mount, sandbox or write qualification follows from
 these namespace/contract checks.
+
+## Planning validation versus runtime qualification
+
+The [r0 validator record](conductor/tracks/track-001-workspace-and-core-traits/r0-validation.md)
+describes the structural check now included in the existing gate. It rejects
+unknown/cyclic phase references, duplicate or malformed metadata, profile gates
+that do not resolve, missing evidence dimensions and plan/metadata drift.
+`python3 scripts/conductor_graph.py` runs it separately. A successful check does
+not accept a source checkpoint, native fixture, mount or writer; profile status
+remains `not_qualified`. Scoped checkpoint matching is a separate increment.
