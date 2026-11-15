@@ -1,0 +1,63 @@
+{
+  "track_id": "track-005-overlay-and-recovery",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-11-15T03:30:04Z",
+  "repositories": [
+    "."
+  ],
+  "owners": [],
+  "description": "Base-preserving overlay with instrumented persistence and frozen export",
+  "updated_at": "2026-11-15",
+  "dependencies": [
+    "track-001-workspace-and-core-traits"
+  ],
+  "dependency_semantics": "Phase edges require accepted common-interface evidence plus any matching target/profile evidence. Aggregate phase status is not a substitute for scoped acceptance; a qualified host lane may proceed while other host lanes remain pending.",
+  "phases": [
+    {
+      "id": "p1",
+      "name": "Persistence decision",
+      "status": "pending",
+      "depends_on": [
+        "track-001-workspace-and-core-traits#p2"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p2",
+      "name": "Bounded transactional block overlay",
+      "status": "pending",
+      "depends_on": [
+        "track-005-overlay-and-recovery#p1",
+        "track-001-workspace-and-core-traits#p6"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p3",
+      "name": "Actual persistence fault qualification",
+      "status": "pending",
+      "depends_on": [
+        "track-005-overlay-and-recovery#p2",
+        "track-006-conformance-and-release#p1"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p4",
+      "name": "Frozen new-image export",
+      "status": "pending",
+      "depends_on": [
+        "track-005-overlay-and-recovery#p3",
+        "track-002-apfs-readonly-and-mount#p2"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    }
+  ],
+  "verification": {
+    "status": "not_run",
+    "scope": "Planned feature; documentation-only revision, no current-head runtime qualification."
+  },
+  "planning_revision": "0.3",
+  "update_time_precision": "date"
+}

@@ -1,0 +1,108 @@
+{
+  "track_id": "track-001-workspace-and-core-traits",
+  "type": "feature",
+  "status": "in_progress",
+  "created_at": "2026-11-15T02:53:03Z",
+  "updated_at": "2026-11-15",
+  "description": "Minimal read foundation, deferred mount/write contracts and bounded storage reuse",
+  "repositories": [
+    "."
+  ],
+  "dependencies": [],
+  "owners": [],
+  "decisions": [
+    "Core crates are independent of mount libraries.",
+    "Write batches describe ordering and durability, not universal crash atomicity.",
+    "Real fixture and OS qualification remain required beyond the initial contract seed."
+  ],
+  "verification": {
+    "status": "passed_for_phase_1_only",
+    "commands": [
+      "cargo fmt --all -- --check",
+      "cargo check --workspace --locked",
+      "cargo test --workspace --locked",
+      "cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "python3 scripts/check_contracts.py"
+    ],
+    "environment": "Linux x86_64; Rust 1.100.0",
+    "tests_passed": 19,
+    "tests_ignored": 0,
+    "scope": "Historical original bootstrap receipt only; not rerun for planning revisions 0.2 or 0.3.",
+    "baseline_commit": "e0bcbfe774803401aba54e7d25d4ee9271a4e387"
+  },
+  "dependency_semantics": "Phase edges require accepted common-interface evidence plus any matching target/profile evidence. Aggregate phase status is not a substitute for scoped acceptance; a qualified host lane may proceed while other host lanes remain pending.",
+  "phases": [
+    {
+      "id": "p1",
+      "name": "Historical compiled seed",
+      "status": "complete_historical",
+      "depends_on": [],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "r0",
+      "name": "Reproduce baseline and apply identity",
+      "status": "pending",
+      "depends_on": [
+        "track-001-workspace-and-core-traits#p1"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p2",
+      "name": "Minimal read-only source/view/budget contracts",
+      "status": "pending",
+      "depends_on": [
+        "track-001-workspace-and-core-traits#r0"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p3",
+      "name": "Consumed container and partition adapters",
+      "status": "pending",
+      "depends_on": [
+        "track-001-workspace-and-core-traits#p2"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p4",
+      "name": "Read metadata and capability projection",
+      "status": "pending",
+      "depends_on": [
+        "track-001-workspace-and-core-traits#p2"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p5",
+      "name": "Mounted handle semantics",
+      "status": "pending",
+      "depends_on": [
+        "track-001-workspace-and-core-traits#p4"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p6",
+      "name": "Write sessions and measured storage reuse",
+      "status": "pending",
+      "depends_on": [
+        "track-001-workspace-and-core-traits#p2"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    }
+  ],
+  "design_revision": {
+    "version": "0.3",
+    "status": "authored_pending_gate",
+    "cargo_gate": "blocked_toolchain_unavailable",
+    "runtime_source_changed": false,
+    "dependencies_changed": false,
+    "namespace_migrated": false,
+    "record": "revision-0.3.md"
+  },
+  "planning_revision": "0.3",
+  "update_time_precision": "date"
+}

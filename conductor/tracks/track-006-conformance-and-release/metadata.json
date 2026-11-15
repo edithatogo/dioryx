@@ -1,0 +1,203 @@
+{
+  "track_id": "track-006-conformance-and-release",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-11-15T03:30:04Z",
+  "repositories": [
+    "."
+  ],
+  "owners": [],
+  "description": "Early fixture admission, image isolation, raw authority and profile-scoped release",
+  "updated_at": "2026-11-15",
+  "dependencies": [
+    "track-001-workspace-and-core-traits"
+  ],
+  "dependency_semantics": "Phase edges require accepted common-interface evidence plus any matching target/profile evidence. Aggregate phase status is not a substitute for scoped acceptance; a qualified host lane may proceed while other host lanes remain pending.",
+  "phases": [
+    {
+      "id": "p1",
+      "name": "Native corpus and evidence admission",
+      "status": "pending",
+      "depends_on": [
+        "track-001-workspace-and-core-traits#r0"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p2",
+      "name": "Image-worker isolation by host",
+      "status": "pending",
+      "depends_on": [
+        "track-006-conformance-and-release#p1",
+        "track-001-workspace-and-core-traits#p2",
+        "track-001-workspace-and-core-traits#p4"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p3",
+      "name": "Raw-device broker and write authority",
+      "status": "pending",
+      "depends_on": [
+        "track-006-conformance-and-release#p2",
+        "track-001-workspace-and-core-traits#p6"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    },
+    {
+      "id": "p4",
+      "name": "Profile release assembly and full-scope join",
+      "status": "pending",
+      "depends_on": [
+        "track-002-apfs-readonly-and-mount#p4",
+        "track-003-exfat-read-write-engine#p4",
+        "track-005-overlay-and-recovery#p4",
+        "track-006-conformance-and-release#p3"
+      ],
+      "completion_policy": "All listed tasks and all explicitly required host lanes must pass before aggregate phase completion; narrower accepted checkpoints may satisfy only scope-matched downstream prerequisites."
+    }
+  ],
+  "verification": {
+    "status": "not_run",
+    "scope": "Planned feature; documentation-only revision, no current-head runtime qualification."
+  },
+  "planning_revision": "0.3",
+  "qualification_profiles": {
+    "controlled-apfs-proof": {
+      "requires_phases": [
+        "track-002-apfs-readonly-and-mount#p1"
+      ],
+      "status": "not_qualified",
+      "scope": "Requires accepted evidence for the applicable interface and matching target/profile, not a boolean phase status. Host/runtime, features, source, fixture and fault coverage remain mandatory.",
+      "required_evidence_dimensions": [
+        "source_tree",
+        "dependency_lock_and_features",
+        "target_and_os",
+        "runtime_or_driver_when_applicable",
+        "fixture_and_oracle",
+        "operation_and_view_mode",
+        "fault_model_when_applicable"
+      ]
+    },
+    "apfs-library-image-read": {
+      "requires_phases": [
+        "track-002-apfs-readonly-and-mount#p2"
+      ],
+      "status": "not_qualified",
+      "scope": "Requires accepted evidence for the applicable interface and matching target/profile, not a boolean phase status. Host/runtime, features, source, fixture and fault coverage remain mandatory.",
+      "required_evidence_dimensions": [
+        "source_tree",
+        "dependency_lock_and_features",
+        "target_and_os",
+        "runtime_or_driver_when_applicable",
+        "fixture_and_oracle",
+        "operation_and_view_mode",
+        "fault_model_when_applicable"
+      ]
+    },
+    "exfat-library-image-read": {
+      "requires_phases": [
+        "track-003-exfat-read-write-engine#p1"
+      ],
+      "status": "not_qualified",
+      "scope": "Requires accepted evidence for the applicable interface and matching target/profile, not a boolean phase status. Host/runtime, features, source, fixture and fault coverage remain mandatory.",
+      "required_evidence_dimensions": [
+        "source_tree",
+        "dependency_lock_and_features",
+        "target_and_os",
+        "runtime_or_driver_when_applicable",
+        "fixture_and_oracle",
+        "operation_and_view_mode",
+        "fault_model_when_applicable"
+      ]
+    },
+    "apfs-hostile-image-cli": {
+      "requires_phases": [
+        "track-002-apfs-readonly-and-mount#p2",
+        "track-006-conformance-and-release#p2"
+      ],
+      "status": "not_qualified",
+      "scope": "Requires accepted evidence for the applicable interface and matching target/profile, not a boolean phase status. Host/runtime, features, source, fixture and fault coverage remain mandatory.",
+      "required_evidence_dimensions": [
+        "source_tree",
+        "dependency_lock_and_features",
+        "target_and_os",
+        "runtime_or_driver_when_applicable",
+        "fixture_and_oracle",
+        "operation_and_view_mode",
+        "fault_model_when_applicable"
+      ]
+    },
+    "exfat-hostile-image-cli": {
+      "requires_phases": [
+        "track-003-exfat-read-write-engine#p1",
+        "track-002-apfs-readonly-and-mount#p2",
+        "track-006-conformance-and-release#p2"
+      ],
+      "status": "not_qualified",
+      "scope": "Requires accepted evidence for the applicable interface and matching target/profile, not a boolean phase status. Host/runtime, features, source, fixture and fault coverage remain mandatory.",
+      "required_evidence_dimensions": [
+        "source_tree",
+        "dependency_lock_and_features",
+        "target_and_os",
+        "runtime_or_driver_when_applicable",
+        "fixture_and_oracle",
+        "operation_and_view_mode",
+        "fault_model_when_applicable"
+      ]
+    },
+    "apfs-image-read-mount": {
+      "requires_phases": [
+        "track-002-apfs-readonly-and-mount#p4",
+        "track-006-conformance-and-release#p2"
+      ],
+      "status": "not_qualified",
+      "scope": "Requires accepted evidence for the applicable interface and matching target/profile, not a boolean phase status. Host/runtime, features, source, fixture and fault coverage remain mandatory.",
+      "required_evidence_dimensions": [
+        "source_tree",
+        "dependency_lock_and_features",
+        "target_and_os",
+        "runtime_or_driver_when_applicable",
+        "fixture_and_oracle",
+        "operation_and_view_mode",
+        "fault_model_when_applicable"
+      ]
+    },
+    "exfat-overlay-export": {
+      "requires_phases": [
+        "track-003-exfat-read-write-engine#p3",
+        "track-005-overlay-and-recovery#p4",
+        "track-006-conformance-and-release#p2"
+      ],
+      "status": "not_qualified",
+      "scope": "Requires accepted evidence for the applicable interface and matching target/profile, not a boolean phase status. Host/runtime, features, source, fixture and fault coverage remain mandatory.",
+      "required_evidence_dimensions": [
+        "source_tree",
+        "dependency_lock_and_features",
+        "target_and_os",
+        "runtime_or_driver_when_applicable",
+        "fixture_and_oracle",
+        "operation_and_view_mode",
+        "fault_model_when_applicable"
+      ]
+    },
+    "exfat-direct-device-write-mount": {
+      "requires_phases": [
+        "track-003-exfat-read-write-engine#p4",
+        "track-006-conformance-and-release#p3"
+      ],
+      "status": "not_qualified",
+      "scope": "Requires accepted evidence for the applicable interface and matching target/profile, not a boolean phase status. Host/runtime, features, source, fixture and fault coverage remain mandatory.",
+      "required_evidence_dimensions": [
+        "source_tree",
+        "dependency_lock_and_features",
+        "target_and_os",
+        "runtime_or_driver_when_applicable",
+        "fixture_and_oracle",
+        "operation_and_view_mode",
+        "fault_model_when_applicable"
+      ]
+    }
+  },
+  "update_time_precision": "date"
+}
