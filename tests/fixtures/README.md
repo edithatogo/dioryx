@@ -7,6 +7,12 @@ Before a backend's first accepted feature, add genuine images produced by the
 native OS or its maintained formatter and verify them independently. Synthetic
 and deliberately corrupted inputs supplement those images.
 
+The [synthetic rejection corpus](negative/) and
+[conformance preflight checks](../conformance/README.md) exercise fixture admission
+rejections for track006/p1. They do not supply a native master or complete native
+admission; the accepted track001/r0 checkpoint and genuine native artifacts remain
+required.
+
 ## Inventory and evidence
 
 Keep reproducible recipes, small payload sources and manifests in this directory.

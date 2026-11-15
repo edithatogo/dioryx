@@ -1,0 +1,15 @@
+{
+  "purpose": "Synthetic test vectors only; not fixture manifests or native evidence.",
+  "payload_sha256": "9f59af530e0605b2cf1eb1b55133dae6c2ed67f1e26dad07af418f85abf87b08",
+  "feature_manifest": {
+    "filesystem": "synthetic-test-format",
+    "container": "ordinary-test-file",
+    "sector_size": 512,
+    "cluster_size": 4096,
+    "features": {"snapshots": false, "compression": "absent"},
+    "view": "synthetic-live-tree"
+  },
+  "candidate_ancestry": ["synthetic:candidate", "synthetic:shared-parser"],
+  "fork_oracle_ancestry": ["synthetic:oracle-fork", "synthetic:shared-parser"],
+  "separate_oracle_ancestry": ["synthetic:separate-oracle"]
+}
