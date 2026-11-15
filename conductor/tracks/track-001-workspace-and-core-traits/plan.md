@@ -38,8 +38,8 @@ Files: `Cargo.toml`, six existing crate manifests, `Cargo.lock`,
 only affected namespace documentation. No production behavior change in this phase.
 
 - [x] **R0.1 Reproduce the baseline.** Run unchanged G on the supplied exact tree; record actual compiler/target and lock resolution. A missing compiler/dependency is blocked, not repaired by silently changing pins. Reconcile any failure before feature work.
-- [~] **R0.2 Mechanical namespace migration.** First make a manifest/mapping regression fail for the proposed six names. Rename existing packages using the explicit identity table, keep directories and internal dependency aliases deliberate, regenerate the lockfile with Cargo and update the checker's mapping. G plus `cargo metadata --locked --no-deps` must show only the intended package changes. No new umbrella/CLI crate.
-- [ ] **R0.3 Phase/profile validation.** Add failing `unknown_phase_rejected`, `phase_cycle_rejected`, `profile_cannot_reference_missing_gate` and `historical_pass_cannot_promote_current_profile` and `different_target_or_mode_cannot_satisfy_edge`. Extend the existing checker and its Python tests; preserve compiled-declaration matching. Run `python3 -m unittest discover -s scripts/tests` plus G. Metadata edges are data, not completion evidence.
+- [x] **R0.2 Mechanical namespace migration.** First make a manifest/mapping regression fail for the proposed six names. Rename existing packages using the explicit identity table, keep directories and internal dependency aliases deliberate, regenerate the lockfile with Cargo and update the checker's mapping. G plus `cargo metadata --locked --no-deps` must show only the intended package changes. No new umbrella/CLI crate.
+- [~] **R0.3 Phase/profile validation.** Add failing `unknown_phase_rejected`, `phase_cycle_rejected`, `profile_cannot_reference_missing_gate` and `historical_pass_cannot_promote_current_profile` and `different_target_or_mode_cannot_satisfy_edge`. Extend the existing checker and its Python tests; preserve compiled-declaration matching. Run `python3 -m unittest discover -s scripts/tests` plus G. Metadata edges are data, not completion evidence.
 
 ## p2 — Minimal read-only source/view/budget contracts
 
@@ -146,6 +146,16 @@ The staged lockfile rename is provisional until hosted Cargo regenerates identic
 bytes under `--offline --locked`; locked check/test and real Cargo metadata are
 mandatory. No task is complete until its exact-head review and G pass.
 
-R0.3 will be split after R0.2: graph/shape validation first, scoped prerequisite
-matching second. Regression tests live under `scripts/tests`; validator code stays
-under `scripts`. Static metadata validity never qualifies a runtime profile.
+R0.2 is qualified and merged at `1610c1bdd1ada27e2494180fa13bd3088307d252`;
+its push/PR runs 43708279112 and 43708308049 passed all three hosts. Structural
+R0.3a is qualified and merged at `bc2cdedd7e6248852f960b2f65270b2d547ba123`;
+push/PR runs 43709323287 and 43709344426 passed all three hosts. Each head has an
+exact-head integration review and a repository automated review without findings.
+
+R0.3b implements scoped prerequisite matching with 25 synthetic regressions and
+58 total Python tests passing locally. Exact-head hosted G is required before this
+remaining subtask or aggregate r0 is complete. See [schema and evidence](r0-validation.md).
+No native profile is promoted. Regression tests live under `scripts/tests`;
+validator code stays under `scripts`. PR #3's seven fixture/conformance paths remain
+owned by its existing lane; native provenance and conformance CI wiring are not
+claimed by these shared contract changes.
