@@ -124,3 +124,22 @@ passed all three hosts, 19 Rust and 33 Python tests. Exact-head automated reposi
 reviews of both PRs completed without findings. Integration reviews are recorded
 on those exact heads. Scoped matching requires its own head's G before acceptance;
 none of these results qualifies an APFS/exFAT image, native sandbox, mount or writer.
+
+
+Scoped implementation PR #6 head `89c1cdb147d7bd7270d97adcfbb86544dbefa80d`,
+tree `60840e7f440d3661fcd6411a2898ddf3ab5b5665`: push 43710227894 and PR
+43710258594 passed all three hosts, 19 Rust and 58 Python tests. Integration
+review 5910499089 and automated repository review 6893794530 inspected that exact
+implementation head and found no blockers. These results close r0 implementation,
+not a native profile or the full R0 delivery milestone's native-fixture work.
+
+The receipt-only follow-up changes this record, the plan checkboxes and r0 metadata;
+all scripts, tests, Rust, Cargo, toolchain, CI, submodule and fixture bytes stay
+unchanged. Its final exact-head G and review are required and recorded on PR #6
+before integration. Keeping the checked implementation SHA separate avoids claiming
+that a receipt validated itself. Existing historical receipts remain historical.
+
+Next independently bounded work is integrator-owned checkpoint/provenance mapping
+and hosted conformance wiring with the existing PR #3 lane, or the first read-only
+source/view contract in 001/p2. Native masters and upstream APFS reader proof remain
+separate gated work; no duplicate fixture implementation or new worker is assigned.

@@ -44,7 +44,7 @@
     {
       "id": "r0",
       "name": "Reproduce baseline and apply identity",
-      "status": "in_progress",
+      "status": "complete",
       "depends_on": [
         "track-001-workspace-and-core-traits#p1"
       ],
@@ -106,5 +106,24 @@
     "record": "revision-0.3.md"
   },
   "planning_revision": "0.3",
-  "update_time_precision": "date"
+  "update_time_precision": "date",
+  "r0_verification": {
+    "scope": "Namespace and phase/profile validation only; no native or runtime profile qualification.",
+    "implementation_head": "89c1cdb147d7bd7270d97adcfbb86544dbefa80d",
+    "implementation_tree": "60840e7f440d3661fcd6411a2898ddf3ab5b5665",
+    "status": "passed_for_r0_implementation_only",
+    "hosts": [
+      "ubuntu-latest",
+      "macos-latest",
+      "windows-latest"
+    ],
+    "push_run_id": 43710227894,
+    "pr_run_id": 43710258594,
+    "rust_integration_tests": 19,
+    "python_tests": 58,
+    "tests_ignored": 0,
+    "integration_review_id": 5910499089,
+    "record": "r0-validation.md",
+    "receipt_revision_gate": "The receipt-only follow-up still requires exact-head G and review before integration."
+  }
 }
