@@ -37,7 +37,7 @@ Sources consulted:
 - Gephyra extension: https://marketplace.visualstudio.com/items?itemName=alkisyuv.gephyra
 - Registry index check: https://api.github.com/repos/rust-lang/crates.io-index/contents/di/or/dioryx
 
-## Proposed namespace, not an executed Cargo rename
+## Current namespace and future packages
 
 | Existing directory / responsibility | Target package | Public Rust import / executable |
 | --- | --- | --- |
@@ -54,17 +54,16 @@ Sources consulted:
 | Future `crates/fs-cli` | `dioryx-cli` | binary `dioryx` |
 | Future `crates/dioryx` | `dioryx` | application-facing library |
 
-Retain existing directories and track IDs to preserve links and history. Perform
-all six existing package-name changes as one mechanical, separately reviewed
-track-001/r0 task after reproducing the baseline. Update dependency package aliases,
-Cargo.lock, the contract checker's explicit directory-to-package mapping and its
-regressions together. Internal aliases may preserve existing imports during this
-mechanical change; they must not expose third-party types in the public API.
-Tests specified by manifest path continue to work across the package-name change.
-Do not create the umbrella package until it has a real open/list/read consumer.
-Do not create any future package merely to reserve a name. All packages remain
+The first six package names above are implemented. Existing directories and track
+IDs are retained. Workspace dependency keys and Rust imports use the same
+`dioryx-*` / `dioryx_*` names; no legacy alias or old public library name is kept.
+The namespace validator has an explicit directory-to-package map and checks actual
+Cargo metadata, including public library target names and disabled publishing.
+
+The remaining rows are future packages, not empty reservations. Do not create the
+umbrella package until it has a real open/list/read consumer. All packages remain
 `publish = false`; licensing and publication remain explicit later decisions.
 
-The present revision changes documentation only. Current Cargo names and source
-remain exactly those of the supplied version 0.2 workspace. Product/document
-revision 0.3 is not a release version or a claim of API stability.
+The original revision 0.3 was documentation-only. Namespace execution and its
+qualification now belong to [track 001/r0](../conductor/tracks/track-001-workspace-and-core-traits/plan.md).
+Neither planning revision 0.3 nor this rename is a release or API-stability claim.

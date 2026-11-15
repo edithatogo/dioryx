@@ -1,4 +1,4 @@
-use transform_core::*;
+use dioryx_transforms::*;
 
 #[test]
 fn identity_preserves_blocks_and_rejects_size_mismatch() -> Result<(), TransformError> {

@@ -3,9 +3,9 @@ mod rejecting_writer;
 #[path = "../../storage-io/tests/support/mod.rs"]
 mod support;
 
+use dioryx_storage::{BlockDevice, FileDevice, FlushBarrier, StorageError, WriteFailure};
+use dioryx_volumes::*;
 use std::sync::Arc;
-use storage_io::{BlockDevice, FileDevice, FlushBarrier, StorageError, WriteFailure};
-use volume_core::*;
 
 #[test]
 fn nested_slices_cannot_read_adjacent_volume_bytes() -> Result<(), Box<dyn std::error::Error>> {

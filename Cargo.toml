@@ -18,8 +18,8 @@ publish = false
 [workspace.dependencies]
 thiserror = "=2.0.21"
 unicode-normalization = "=0.1.26"
-storage-io = { path = "crates/storage-io" }
-semantics-core = { path = "crates/semantics-core" }
+dioryx-storage = { path = "crates/storage-io" }
+dioryx-semantics = { path = "crates/semantics-core" }
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

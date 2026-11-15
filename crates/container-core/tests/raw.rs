@@ -3,9 +3,9 @@ mod rejecting_writer;
 #[path = "../../storage-io/tests/support/mod.rs"]
 mod support;
 
-use container_core::{Container, ContainerError, RawContainer};
+use dioryx_containers::{Container, ContainerError, RawContainer};
+use dioryx_storage::{FileDevice, FlushBarrier, WriteFailure};
 use std::sync::Arc;
-use storage_io::{FileDevice, FlushBarrier, WriteFailure};
 
 #[test]
 fn raw_container_exposes_exactly_one_unchanged_disk() -> Result<(), Box<dyn std::error::Error>> {

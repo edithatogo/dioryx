@@ -16,8 +16,11 @@ The working seed contains a read-only regular-file device, bounded raw/volume
 views, identity transforms, lossless names and core interfaces. Its FileDevice
 serializes seek/read and depends on externally immutable input. The minimal
 capability mask and metadata do not yet implement the richer contracts below.
-New interfaces are added in the smallest consuming track-001 increment; the direct upstream reader proof may precede the VFS adapter; this revision
-leaves the Rust declarations, Cargo manifests and lockfile unchanged.
+New interfaces are added in the smallest consuming track-001 increment; the direct
+upstream reader proof may precede the VFS adapter. The r0 namespace migration
+changes package/import names only; behavior and external dependencies are unchanged.
+Diagram labels and contract headings below retain source-directory identities;
+[the namespace map](docs/identity.md) gives the current public package names.
 
 | Decision | Selected direction | Rejected or conditional alternative |
 | --- | --- | --- |
@@ -122,7 +125,7 @@ than treating --all-features as a meaningful universal target.
 
 The substrate comparison is: existing seed plus standard positional I/O/small
 adapters versus rust-fs-core's reusable devices/slices/cache. Preserve our public
-contracts in both. Its documented library name fs_core collides with ours: any
+contracts in both. Its documented library name fs_core is not our dioryx_vfs: any
 admission must use a Cargo dependency alias, private to the adapter, and a compile
 test. Upstream write_at/flush alone cannot supply serialized groups, uncertain
 outcomes, exclusive ownership or crash guarantees. Audit buffering and cursor
@@ -347,9 +350,9 @@ revision is authored but not Cargo-accepted in its editing runtime; see the
 
 ## 9a. Revision 0.3: delivery, authority and fault seams
 
-[Dioryx](docs/identity.md) is the proposed working identity, not a new disk format.
-The package namespace is planned but not yet applied; the declarations below still
-match the original seed. Do not create an empty umbrella package or publish names.
+[Dioryx](docs/identity.md) is the project identity, not a new disk format.
+The six existing packages use the Dioryx namespace; source-directory identities
+remain stable and the declarations below remain source-derived. Do not create an empty umbrella package or publish names.
 
 The direct APFS native-reader proof precedes generic VFS integration. Minimal
 read-only source/view/budget and read metadata contracts are separate from mounted

@@ -1,4 +1,4 @@
-use semantics_core::*;
+use dioryx_semantics::*;
 
 #[test]
 fn presentation_normalization_does_not_change_identity() -> Result<(), SemanticsError> {

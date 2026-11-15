@@ -9,7 +9,9 @@
     "."
   ],
   "dependencies": [],
-  "owners": [],
+  "owners": [
+    "existing-dioryx-integration-chat (Dylan-authorised sole integration owner)"
+  ],
   "decisions": [
     "Core crates are independent of mount libraries.",
     "Write batches describe ordering and durability, not universal crash atomicity.",
@@ -42,7 +44,7 @@
     {
       "id": "r0",
       "name": "Reproduce baseline and apply identity",
-      "status": "pending",
+      "status": "in_progress",
       "depends_on": [
         "track-001-workspace-and-core-traits#p1"
       ],

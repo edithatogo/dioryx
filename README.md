@@ -1,8 +1,8 @@
 # Dioryx
 
 A composable Rust framework for cross-platform filesystem access. **Dioryx** is
-the project name; the [namespace plan](docs/identity.md) has not yet renamed
-Cargo packages. This repository starts with executable core contracts, a read-only
+the project name; the six existing Cargo packages now use the
+[`dioryx-*` namespace](docs/identity.md). This repository starts with executable core contracts, a read-only
 regular-file device, bounded raw/volume views, identity transforms and filename
 semantics. It does not yet parse or mount APFS, exFAT or any other filesystem.
 
@@ -24,7 +24,8 @@ cargo check --workspace --locked
 cargo test --workspace --locked
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
-python3 scripts/check_contracts.py
+python3 -m unittest discover -s scripts/tests -v
+cargo metadata --locked --no-deps --format-version 1 | python3 scripts/check_contracts.py --cargo-metadata -
 ```
 
 The bootstrap requires no FUSE, macFUSE, WinFsp, elevated access or external disk
@@ -63,11 +64,26 @@ mount/write infrastructure. exFAT validates reuse of the read API before stabili
 
 The initial repository import preserves the v0.3 workspace, including all six
 Conductor tracks and the original Rust source, manifests, lockfile, toolchain and
-pinned Conductor checkout. The Dioryx package rename and subsequent features remain
-explicit implementation tasks; no future backend or frontend crate is fabricated.
+pinned Conductor checkout. The package namespace migration is implemented; phase/profile validation and
+subsequent filesystem features remain explicit implementation tasks; no future backend or frontend crate is fabricated.
 
 See the [repository import record](conductor/tracks/track-001-workspace-and-core-traits/repository-import.md)
 for provenance and verification boundaries, and the GitHub Actions results on the
 exact commit for current build status. Historical [revision evidence](conductor/tracks/track-001-workspace-and-core-traits/revision-0.3.md)
 is retained, not substituted for a fresh gate. The three-host core workflow does
 not establish native filesystem, raw-device, mount or write compatibility.
+
+## Track 001/r0 integration
+
+This existing Dioryx chat is the sole integration owner. See the current
+[track plan](conductor/tracks/track-001-workspace-and-core-traits/plan.md) for
+scoped ownership and exact-head review/CI receipts. The namespace change retains
+the existing directories and all public behavior; it does not create an umbrella
+package, CLI or backend. `cargo test -p dioryx-storage --locked` selects the storage
+package; the public library import is `dioryx_storage`. All packages remain private
+to this workspace (`publish = false`).
+
+`bash scripts/check.sh` runs the full gate, including Python regressions, a locked
+offline lockfile regeneration after the build, and validation of actual Cargo
+metadata. No native-fixture, mount, sandbox or write qualification follows from
+these namespace/contract checks.

@@ -1,12 +1,12 @@
 [package]
-name = "volume-core"
+name = "dioryx-volumes"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 publish.workspace = true
 
 [dependencies]
-storage-io.workspace = true
+dioryx-storage.workspace = true
 thiserror.workspace = true
 
 [lints]
