@@ -95,6 +95,11 @@ class BoundedInputTests(unittest.TestCase):
             check_oracle_ancestry(["test-only:root", "test-only:root"], ["test-only:other"])
         self.assertEqual(caught.exception.code, "incomplete-oracle-ancestry")
 
+    def test_invalid_unicode_ancestry_returns_typed_rejection(self):
+        with self.assertRaises(FixtureRejected) as caught:
+            check_oracle_ancestry(["test-only:\ud800"], ["test-only:independent"])
+        self.assertEqual(caught.exception.code, "incomplete-oracle-ancestry")
+
     def test_many_ancestry_records_rejected(self):
         with self.assertRaises(FixtureRejected) as caught:
             check_oracle_ancestry([f"test-only:{i}" for i in range(300)], ["test-only:other"])
