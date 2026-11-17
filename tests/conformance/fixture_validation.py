@@ -258,6 +258,7 @@ def check_oracle_ancestry(candidate, oracle) -> None:
             "The comparator shares parser ancestry; obtain an independent oracle.",
         )
 
+
 def check_fixture_preflight(
     *,
     path: Path,
