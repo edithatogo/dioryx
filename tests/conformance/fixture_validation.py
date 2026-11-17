@@ -224,18 +224,23 @@ def check_feature_manifest(actual: dict, *, expected: dict) -> None:
         )
 
 
+def _valid_ancestry_identity(value) -> bool:
+    if not _nonblank(value) or value != value.strip():
+        return False
+    if len(value) > MAX_ANCESTRY_ID_BYTES:
+        return False
+    try:
+        return len(value.encode("utf-8")) <= MAX_ANCESTRY_ID_BYTES
+    except UnicodeError:
+        return False
+
+
 def _ancestry(values) -> set[str]:
     if (
         not isinstance(values, (list, tuple, set, frozenset))
         or not values
         or len(values) > MAX_ANCESTRY_ENTRIES
-        or not all(
-            _nonblank(value)
-            and value == value.strip()
-            and len(value) <= MAX_ANCESTRY_ID_BYTES
-            and len(value.encode("utf-8")) <= MAX_ANCESTRY_ID_BYTES
-            for value in values
-        )
+        or not all(_valid_ancestry_identity(value) for value in values)
         or len(set(values)) != len(values)
     ):
         raise FixtureRejected(
