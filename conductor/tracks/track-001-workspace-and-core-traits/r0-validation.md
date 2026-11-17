@@ -100,7 +100,10 @@ The future qualification assembler must validate those policy decisions and the
 underlying evidence before accepting a profile.
 
 `catalog_digest(load_catalog(root))` binds the current graph topology, sorting each
-edge list. Descriptive statuses are intentionally excluded. `checkpoint_digest`
+edge list, and the normative phase completion policies and profile scope/evidence
+dimensions. A changed policy invalidates a previously pinned request even when
+its graph topology is unchanged. Descriptive statuses are intentionally excluded.
+`checkpoint_digest`
 pins the complete checkpoint object. Both hash UTF-8 JSON emitted with sorted keys,
 compact comma/colon separators, ASCII escapes and disallowed non-finite values.
 They are content identifiers, not signatures. Field shapes are validated before
@@ -143,3 +146,17 @@ Next independently bounded work is integrator-owned checkpoint/provenance mappin
 and hosted conformance wiring with the existing PR #3 lane, or the first read-only
 source/view contract in 001/p2. Native masters and upstream APFS reader proof remain
 separate gated work; no duplicate fixture implementation or new worker is assigned.
+
+## Scoped policy-digest hardening — 18 November 2026
+
+The original r0 implementation was merged in PRs #4–#6 before this follow-on.
+The topology-only catalog digest did not invalidate old requests after changes
+to phase completion policies or qualification-profile scope. A regression first
+reproduced both collisions on the existing matcher, while confirming that a mere
+phase-status change has no authority. The matcher now binds those normative fields,
+without changing receipt matching, allowing status promotion or claiming native
+qualification. Previously calculated synthetic catalog pins must be regenerated
+against the reviewed policy; no authenticated/native receipts are issued here.
+This record states the intended contract; final head review and hosted G evidence
+belong to the associated follow-on pull request. Fixtures and toolchain pins stay
+unchanged.

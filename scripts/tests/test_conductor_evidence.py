@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import shutil
 from pathlib import Path
 import sys
 import tempfile
@@ -158,6 +159,38 @@ class EvidenceTests(unittest.TestCase):
                 self.reject(fragment)
                 self.bundle['checkpoints'][0][key] = old
                 self.repin_first()
+
+
+    def test_policy_revision_invalidates_old_catalog_pin(self):
+        """A topology-only pin must not accept changes to qualification rules."""
+        for track, part in ((T1, 'completion'), (T6, 'profile')):
+            with self.subTest(part=part), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                shutil.copytree(ROOT / 'conductor/tracks', root / 'conductor/tracks')
+                metadata = root / 'conductor/tracks' / track / 'metadata.json'
+                item = json.loads(metadata.read_text(encoding='utf-8'))
+                if part == 'completion':
+                    item['phases'][1]['completion_policy'] += ' Must verify an additional guard.'
+                else:
+                    item['qualification_profiles']['controlled-apfs-proof']['scope'] += ' Stricter proof.'
+                metadata.write_text(json.dumps(item), encoding='utf-8')
+                revised_catalog = load_catalog(root)
+                self.assertNotEqual(self.api.catalog_digest(self.catalog),
+                                    self.api.catalog_digest(revised_catalog))
+                with self.assertRaisesRegex(ValueError, 'catalog digest mismatch'):
+                    self.api.match_checkpoints(revised_catalog, self.request, self.bundle)
+
+    def test_descriptive_phase_status_does_not_invalidate_catalog_pin(self):
+        """An unverified status label cannot change checkpoint admission semantics."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            shutil.copytree(ROOT / 'conductor/tracks', root / 'conductor/tracks')
+            metadata = root / 'conductor/tracks' / T1 / 'metadata.json'
+            item = json.loads(metadata.read_text(encoding='utf-8'))
+            item['phases'][1]['status'] = 'blocked'
+            metadata.write_text(json.dumps(item), encoding='utf-8')
+            self.assertEqual(self.api.catalog_digest(self.catalog),
+                             self.api.catalog_digest(load_catalog(root)))
 
     def test_catalog_revision_must_match(self):
         self.request['catalog_sha256'] = 'f' * 64
