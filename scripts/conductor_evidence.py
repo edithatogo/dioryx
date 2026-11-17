@@ -47,10 +47,15 @@ def checkpoint_digest(receipt: dict) -> str:
 
 
 def catalog_digest(catalog: Catalog) -> str:
-    """Bind graph topology; descriptive statuses cannot create acceptance."""
+    """Bind normative graph and policy; descriptive statuses cannot create acceptance."""
     return canonical_digest({
         'phases': {key: sorted(value) for key, value in catalog.phases.items()},
         'profiles': {key: sorted(value) for key, value in catalog.profiles.items()},
+        'phase_completion_policies': catalog.completion_policies,
+        'profile_policies': {
+            key: {'scope': scope, 'required_evidence_dimensions': list(dimensions)}
+            for key, (scope, dimensions) in catalog.qualification_policies.items()
+        },
     })
 
 

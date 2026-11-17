@@ -29,6 +29,9 @@ class Catalog:
     # Status is deliberately absent: it cannot be used as prerequisite evidence.
     phases: dict[str, tuple[str, ...]]
     profiles: dict[str, tuple[str, ...]]
+    # Normative declarations are pinned; descriptive status labels are excluded.
+    completion_policies: dict[str, str]
+    qualification_policies: dict[str, tuple[str, tuple[str, ...]]]
 
 
 def require(condition: bool, message: str) -> None:
@@ -103,6 +106,7 @@ def load_catalog(root: Path) -> Catalog:
     directories = sorted(p for p in (root / 'conductor/tracks').iterdir() if p.is_dir())
     require(bool(directories), 'no tracks found')
     tracks, phases, profiles, plans = {}, {}, {}, {}
+    completion_policies, qualification_policies = {}, {}
     for directory in directories:
         metadata = directory / 'metadata.json'
         item = read_json(metadata)
@@ -126,6 +130,7 @@ def load_catalog(root: Path) -> Catalog:
                     f'invalid phase status: {ref}')
             text(value['name'], 'phase name')
             text(value['completion_policy'], 'phase completion_policy')
+            completion_policies[ref] = value['completion_policy']
             phases[ref] = strings(value['depends_on'], 'phase dependencies')
             local[name] = phases[ref]
         plans[directory / 'plan.md'] = local
@@ -141,6 +146,7 @@ def load_catalog(root: Path) -> Catalog:
             text(value['scope'], 'profile scope')
             dimensions = strings(value['required_evidence_dimensions'], 'evidence dimensions')
             require(set(dimensions) == DIMENSIONS, f'evidence dimensions differ from required set: {name}')
+            qualification_policies[name] = (value['scope'], tuple(sorted(dimensions)))
             profiles[name] = strings(value['requires_phases'], 'profile gates', nonempty=True)
         for required in ('index.md', 'spec.md', 'plan.md'):
             require((directory / required).is_file(), f'missing track file: {directory / required}')
@@ -152,7 +158,7 @@ def load_catalog(root: Path) -> Catalog:
             require(gate in phases, f'unknown phase in profile {profile}: {gate}')
     for path, expected in plans.items():
         plan_edges(path, expected)
-    return Catalog(phases, profiles)
+    return Catalog(phases, profiles, completion_policies, qualification_policies)
 
 
 def check(root: Path) -> list[str]:
