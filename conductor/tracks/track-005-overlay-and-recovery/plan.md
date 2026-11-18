@@ -34,6 +34,16 @@ record. Create `crates/storage-overlay` only with actual behavior, not a facade.
 - [ ] Evaluate redb first, including its actual StorageBackend or equivalent I/O injection seam. Source-screen one image engine; run a second executable comparison only if viable and relevant. Do not force a weaker dependency just to populate a comparison table.
 - [ ] Select or block on explicit correctness/safety/durability criteria, then compare amplification and resource cost. No new WAL/B-tree; checkpoint G and pinned candidate results.
 
+### Serde persistence decision (existing p1; 18 November 2026)
+
+This is a clarification of **existing track 005/p1**, not a new track, phase or acceptance claim. No current Dioryx crate declares Serde; the six read-only seed crates appropriately depend only on narrow core utilities. Do not add Serde to `dioryx-storage`, `dioryx-vfs`, format decoders, block transforms or the raw filesystem byte path.
+
+- [ ] Before a concrete overlay/persistence consumer is admitted, inventory the external storage engine's *actual* metadata encoding, checksums, failure semantics and Serde integration. A typed `serde::{Serialize, Deserialize}` contract is conditional on evidence of a real control-plane metadata consumer, not convenience.
+- [ ] If needed, isolate versioned overlay metadata/source identity/recovery receipts in the first persistence adapter, with explicit bounds, structural validation, duplicate keys, unknown versions, corrupt/truncated bytes, base-generation/source-hash checks and compatibility/migration fixtures. Serde alone cannot prove storage consistency or filesystem integrity.
+- [ ] Compare existing store codec and typed Serde adapter for code eliminated, dependencies/features/MSRV, binary size, round-trip and recovery results. Document a **no-go** when the store's native format is adequate.
+- [ ] Keep raw on-disk APFS/exFAT parsing, lossless raw names, sector bounds, persistence fault injection and qualified native fixture acceptance separate. Do not enable writes, mounts, raw devices, publish or weaken the mandatory evidence gates.
+- [ ] Record exact accepted version/profile, tests, native fixture provenance and the incumbent integration owner's review as part of 005/p1 and 005/p3; do not tick these items until implementation has independently passed.
+
 ## p2 — Bounded transactional block overlay
 
 Prerequisites: `track-005-overlay-and-recovery#p1`, `track-001-workspace-and-core-traits#p6`.
@@ -65,12 +75,3 @@ Files: `crates/fs-cli/tests/overlay_export.rs` and actual export command path.
 - [ ] Export only to a new image and compare full logical bytes on reopen. The consuming filesystem independently supplies native checker and metadata/content evidence.
 - [ ] Base and overlay masters remain intact. No commit-to-original command, raw merge, automatic repair or claim that file rename gives whole-device atomicity.
 
-## p1 dependency decision — Serde and persistence control-plane (18 November 2026)
-
-This is a clarification of **existing track 005/p1**, not a new track, phase or acceptance claim. No current Dioryx crate declares Serde; the six read-only seed crates appropriately depend only on narrow core utilities. Do not add Serde to `dioryx-storage`, `dioryx-vfs`, format decoders, block transforms or the raw filesystem byte path.
-
-- [ ] Before a concrete overlay/persistence consumer is admitted, inventory the external storage engine's *actual* metadata encoding, checksums, failure semantics and Serde integration. A typed `serde::{Serialize, Deserialize}` contract is conditional on evidence of a real control-plane metadata consumer, not convenience.
-- [ ] If needed, isolate versioned overlay metadata/source identity/recovery receipts in the first persistence adapter, with explicit bounds, structural validation, duplicate keys, unknown versions, corrupt/truncated bytes, base-generation/source-hash checks and compatibility/migration fixtures. Serde alone cannot prove storage consistency or filesystem integrity.
-- [ ] Compare existing store codec and typed Serde adapter for code eliminated, dependencies/features/MSRV, binary size, round-trip and recovery results. Document a **no-go** when the store's native format is adequate.
-- [ ] Keep raw on-disk APFS/exFAT parsing, lossless raw names, sector bounds, persistence fault injection and qualified native fixture acceptance separate. Do not enable writes, mounts, raw devices, publish or weaken the mandatory evidence gates.
-- [ ] Record exact accepted version/profile, tests, native fixture provenance and the incumbent integration owner's review as part of 005/p1 and 005/p3; do not tick these items until implementation has independently passed.
