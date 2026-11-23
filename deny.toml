@@ -4,6 +4,8 @@ ignore = []
 
 [licenses]
 confidence-threshold = 0.8
+# Workspace members explicitly inherit publish = false; check third-party licences.
+private = { ignore = true }
 allow = ["MIT", "Apache-2.0", "Unicode-3.0", "BSD-2-Clause", "BSD-3-Clause", "ISC"]
 
 [bans]
