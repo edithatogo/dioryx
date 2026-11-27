@@ -11,7 +11,7 @@ work=$(mktemp -d "$RUNNER_TEMP/dioryx-fixture.XXXXXX")
 mp="$work/mount"
 mkdir "$mp"
 attached=0
-run() { printf '%q ' "$@" >> "$out/commands.log"; printf '\n' >> "$out/commands.log"; "$@"; }
+run() { printf '%q ' "$@" >> "$out/commands.log"; printf '\n' >> "$out/commands.log"; printf '%q ' "$@" >&2; printf '\n' >&2; "$@"; }
 detach() {
     if [ "$kind" = apfs ]; then run hdiutil detach "$mp"; else run sudo umount "$mp"; fi
     attached=0
@@ -66,9 +66,9 @@ if [ "$kind" = apfs ]; then
         assert_unchanged "$out/$name" "$original"
     done
 else
-    run dpkg-query -W exfatprogs > "$out/os-version.txt"
-    run mkfs.exfat -V > "$out/formatter-version.txt" 2>&1
-    run fsck.exfat -V > "$out/checker-version.txt" 2>&1
+    run cat /etc/os-release > "$out/os-version.txt"
+    run dpkg-query -W exfatprogs > "$out/tool-version.txt"
+    run sha256sum "$(command -v mkfs.exfat)" "$(command -v fsck.exfat)" "$(command -v dump.exfat)" > "$out/tool-hashes.txt"
     master="$out/exfat.img"
     run truncate -s 128M "$master"
     run mkfs.exfat -L DIORYXTEST "$master"
