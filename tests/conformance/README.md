@@ -81,10 +81,10 @@ Before native admission, the coordinator must provide:
    file/raw-name/metadata oracles, redistribution rights and source-reviewed
    complete parser ancestry. Preserve original masters and use copies for checking.
    The macOS and exFAT recipes remain unexecuted in this lane.
-3. **CI and independent admission review:** integrate the conformance command
-   into coordinator-owned CI and verify the mapped evidence against real native
-   artifacts at the matching source/host/profile. Existing G does not discover
-   `tests/conformance`; green G cannot substitute for native admission.
+3. **CI and independent admission review:** the owner-authorized integration change adds conformance discovery to the
+   existing gate. Verify the actual suite on each host and mapped evidence
+   against native artifacts at the matching source/host/profile. Green synthetic
+   G cannot substitute for native admission.
 
 The original PR #3 authoring runtime lacked Cargo and native generator tools.
 For this follow-on, Python 3.13.5 on Linux runs the local conformance suite,
@@ -93,6 +93,7 @@ masters are present in the repository. These are blockers, not skips or passes.
 Fresh hosted G on the exact PR head must be checked separately from the local
 Python conformance result.
 
-No shared schema, registry, CI, root manifest/lockfile, core source or existing
-recipe is modified by this lane. The coordinator retains integration; this lane
-does not merge its PR or mark track006/p1 complete.
+The fixture implementation does not modify shared schema, root manifests,
+lockfile, core source or native recipes. The owner-authorized integration change
+adds one existing-gate invocation; the incumbent coordinator retains ongoing
+shared ownership. No native admission or phase completion follows.

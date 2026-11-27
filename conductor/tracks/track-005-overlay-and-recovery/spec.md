@@ -32,3 +32,7 @@ and registry. Dedicated owners change only claimed paths. A newly needed shared
 change is handed to that owner rather than duplicated. Stop at the phase boundary
 with accept/reject/blocked evidence; no new workers, publication, raw-device action
 or unplanned writer is authorized by this document.
+
+## Serde suitability (planning clarification, 18 November 2026)
+
+Serde does not replace filesystem byte parsers, on-disk encodings, bounds checks, storage-engine WAL semantics or native evidence. The present six-crate dependency-light seed is appropriate. **Conditional adoption only** for versioned *control-plane* overlay manifests and recovery metadata at the first real persistence consumer; preserve raw names/source identities and strict recovery invariants. The qualified store's native serialization is preferred unless evidence shows typed Serde reduces code without changing bytes or guarantees. See the new unchecked 005/p1 tasks in [plan.md](plan.md); no new dependency, phase, publisher or owner is created.
