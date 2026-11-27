@@ -7,10 +7,12 @@ import unittest
 from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from fixture_validation import (
     FixtureRejected,
+    _file_identity,
     NativeProvenance,
     check_feature_manifest,
     check_fixture_file,
@@ -36,7 +38,7 @@ class EvidenceRejectionTests(unittest.TestCase):
     def rejected(self, code, function, *args, **kwargs):
         with self.assertRaises(FixtureRejected) as raised:
             function(*args, **kwargs)
-        self.assertEqual(raised.exception.code, code)
+        self.assertEqual(raised.exception.code, code, str(raised.exception))
         self.assertTrue(str(raised.exception))
         return raised.exception
 
@@ -92,6 +94,21 @@ class EvidenceRejectionTests(unittest.TestCase):
             CASES["candidate_ancestry"],
             CASES["fork_oracle_ancestry"],
         )
+
+    def test_windows_cross_accessor_identity_retains_birthtime_and_same_accessor_ctime(self):
+        path_info = SimpleNamespace(st_dev=1, st_ino=2, st_size=3, st_mtime_ns=4,
+                                    st_birthtime_ns=5, st_ctime_ns=5)
+        handle_info = SimpleNamespace(**vars(path_info))
+        handle_info.st_ctime_ns = 6
+        with patch("fixture_validation.os.name", "nt"):
+            self.assertEqual(_file_identity(path_info), _file_identity(handle_info))
+            self.assertNotEqual(_file_identity(path_info, same_accessor=True),
+                                _file_identity(handle_info, same_accessor=True))
+            for field in ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_birthtime_ns"):
+                with self.subTest(field=field):
+                    changed = SimpleNamespace(**vars(handle_info))
+                    setattr(changed, field, getattr(changed, field) + 1)
+                    self.assertNotEqual(_file_identity(path_info), _file_identity(changed))
 
     def test_matching_hash_is_only_an_integrity_check(self):
         self.assertIsNone(self.check_file())

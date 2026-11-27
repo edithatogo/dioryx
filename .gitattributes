@@ -1,0 +1,2 @@
+# A digest-pinned test payload must survive checkout byte-for-byte.
+tests/fixtures/negative/payload.txt -text

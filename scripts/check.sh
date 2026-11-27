@@ -10,4 +10,5 @@ lock_before=$(git hash-object Cargo.lock)
 cargo generate-lockfile --offline --locked
 test "$lock_before" = "$(git hash-object Cargo.lock)"
 python3 -m unittest discover -s scripts/tests -v
+python3 -m unittest discover -s tests/conformance -v
 cargo metadata --locked --no-deps --format-version 1 | python3 scripts/check_contracts.py --cargo-metadata -
