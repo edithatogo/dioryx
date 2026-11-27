@@ -39,8 +39,16 @@ class NativeProvenance:
     redistribution_rights: str
 
 
-def _file_identity(info):
-    return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+def _file_identity(info, *, same_accessor=False):
+    identity = (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns)
+    # CPython Windows path stat and fstat may disagree on deprecated ctime.
+    # Compare creation time across accessors; retain ctime within each accessor.
+    # https://github.com/python/cpython/issues/157671
+    if os.name == "nt":
+        identity += (info.st_birthtime_ns,)
+        if not same_accessor:
+            return identity
+    return (*identity, info.st_ctime_ns)
 
 
 def check_fixture_file(path: Path, *, expected_sha256: str, max_bytes: int) -> None:
@@ -80,14 +88,7 @@ def check_fixture_file(path: Path, *, expected_sha256: str, max_bytes: int) -> N
             if not stat.S_ISREG(opened.st_mode):
                 raise FixtureRejected("not-regular-file", "The opened fixture is not regular.")
             if _file_identity(opened) != _file_identity(before):
-                raise FixtureRejected(
-                    "fixture-changed",
-                    "The fixture changed before hashing (fields: "
-                    + ", ".join(
-                        field for field in ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
-                        if getattr(before, field) != getattr(opened, field)
-                    ) + ").",
-                )
+                raise FixtureRejected("fixture-changed", "The fixture changed before hashing.")
             digest = hashlib.sha256()
             remaining = opened.st_size
             while remaining:
@@ -97,8 +98,10 @@ def check_fixture_file(path: Path, *, expected_sha256: str, max_bytes: int) -> N
                 digest.update(chunk)
                 remaining -= len(chunk)
             if (
-                _file_identity(os.fstat(descriptor)) != _file_identity(opened)
-                or _file_identity(path.lstat()) != _file_identity(opened)
+                _file_identity(os.fstat(descriptor), same_accessor=True)
+                != _file_identity(opened, same_accessor=True)
+                or _file_identity(path.lstat(), same_accessor=True)
+                != _file_identity(before, same_accessor=True)
             ):
                 raise FixtureRejected("fixture-changed", "The fixture changed while hashing.")
         finally:
