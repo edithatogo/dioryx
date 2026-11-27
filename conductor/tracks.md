@@ -18,9 +18,12 @@ The six original track IDs are retained; no second execution hierarchy is create
 
 Metadata phase references (`track-id#phase-id`) are executable prerequisites.
 Top-level track references are only context. The phase graph is authoritative;
-per-host profile evidence is additionally required. The existing checker validates
-coarse track edges; extending it with tested phase/profile checks is a pending r0
-implementation task. The current documentation graph was checked separately.
+per-host profile evidence is additionally required. The implemented `scripts/conductor_graph.py` validates phase/profile structure,
+acyclic dependencies, plan alignment and exact evidence dimension requirements.
+The separate `scripts/conductor_evidence.py` matches independently reviewed
+checkpoint requests against exact scope and content pins. The catalog digest
+binds normative completion and profile policy, excluding descriptive status.
+Neither script verifies native execution or promotes a profile to qualified.
 
 The release-profile table is in track 006 metadata. Its phase prerequisites do not
 assert those phases are passed: every result must also bind host/runtime, source,
