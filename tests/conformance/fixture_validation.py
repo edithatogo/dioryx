@@ -80,7 +80,14 @@ def check_fixture_file(path: Path, *, expected_sha256: str, max_bytes: int) -> N
             if not stat.S_ISREG(opened.st_mode):
                 raise FixtureRejected("not-regular-file", "The opened fixture is not regular.")
             if _file_identity(opened) != _file_identity(before):
-                raise FixtureRejected("fixture-changed", "The fixture changed before hashing.")
+                raise FixtureRejected(
+                    "fixture-changed",
+                    "The fixture changed before hashing (fields: "
+                    + ", ".join(
+                        field for field in ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+                        if getattr(before, field) != getattr(opened, field)
+                    ) + ").",
+                )
             digest = hashlib.sha256()
             remaining = opened.st_size
             while remaining:
