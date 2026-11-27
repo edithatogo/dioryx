@@ -51,7 +51,7 @@ their own gates and separate publication approval.
 
 [Track](tracks/track-005-overlay-and-recovery/index.md).
 
-## [ ] 006 — Native evidence and authority qualification
+## [~] 006 — Native evidence and authority qualification
 
 [Track](tracks/track-006-conformance-and-release/index.md).
 

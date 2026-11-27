@@ -1,14 +1,14 @@
 {
   "track_id": "track-006-conformance-and-release",
   "type": "feature",
-  "status": "new",
+  "status": "in_progress",
   "created_at": "2026-11-15T03:30:04Z",
   "repositories": [
     "."
   ],
   "owners": [],
   "description": "Early fixture admission, image isolation, raw authority and profile-scoped release",
-  "updated_at": "2026-11-15",
+  "updated_at": "2026-11-28",
   "dependencies": [
     "track-001-workspace-and-core-traits"
   ],
@@ -17,7 +17,7 @@
     {
       "id": "p1",
       "name": "Native corpus and evidence admission",
-      "status": "pending",
+      "status": "in_progress",
       "depends_on": [
         "track-001-workspace-and-core-traits#r0"
       ],
@@ -58,8 +58,14 @@
     }
   ],
   "verification": {
-    "status": "not_run",
-    "scope": "Planned feature; documentation-only revision, no current-head runtime qualification."
+    "status": "candidate_acquisition_only",
+    "scope": "Synthetic rejection task passed exact receiving-tree three-host G; native baseline acquisition and independent archive verification only. No native fixture admitted; no profile qualified.",
+    "record": "../../../tests/fixtures/native-acquisition.md",
+    "synthetic_receiving_commit": "259a822b56008d2c0de05d5cd4a026f81a5bbef9",
+    "native_candidate_run_ids": [
+      46083992900,
+      46084151438
+    ]
   },
   "planning_revision": "0.3",
   "qualification_profiles": {
