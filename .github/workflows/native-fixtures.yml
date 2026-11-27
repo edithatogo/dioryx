@@ -1,0 +1,55 @@
+name: Native fixture candidates
+on:
+  push:
+    branches: [fixture/track006-native-acquisition-20261128]
+    paths:
+      - '.github/workflows/native-fixtures.yml'
+      - 'tests/fixtures/generate-native.sh'
+      - 'tests/conformance/native_oracle.py'
+      - 'tests/conformance/test_native_oracle.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acquire:
+    if: github.repository == 'edithatogo/dioryx'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            kind: apfs
+          - os: ubuntu-latest
+            kind: exfat
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - name: Audit runner
+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Check known-answer oracle
+        run: python3 -m unittest discover -s tests/conformance -p test_native_oracle.py -v
+      - name: Install native exFAT formatter if missing
+        if: matrix.kind == 'exfat'
+        run: |
+          if ! command -v mkfs.exfat || ! command -v fsck.exfat || ! command -v dump.exfat; then
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends exfatprogs
+          fi
+      - name: Generate and independently read back disposable fixture
+        shell: bash
+        run: bash tests/fixtures/generate-native.sh '${{ matrix.kind }}'
+      - name: Retain candidate images and actual provenance
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-candidate-${{ matrix.kind }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/dioryx-native-${{ matrix.kind }}
+          if-no-files-found: error
+          retention-days: 30
