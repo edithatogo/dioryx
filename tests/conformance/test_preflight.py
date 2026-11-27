@@ -105,6 +105,44 @@ class BoundedInputTests(unittest.TestCase):
             check_oracle_ancestry([f"test-only:{i}" for i in range(300)], ["test-only:other"])
         self.assertEqual(caught.exception.code, "incomplete-oracle-ancestry")
 
+    # Literal limits come from the contract, not the validator's constants.
+    def test_feature_text_budget_includes_key_and_utf8_bytes(self):
+        for encoding, exact in (("ascii", "x" * 262143), ("utf8", "\u20ac" * 87381)):
+            for over in (False, True):
+                with self.subTest(encoding=encoding, over=over):
+                    feature = {"k": exact + ("x" if over else "")}
+                    if over:
+                        with self.assertRaises(FixtureRejected) as caught:
+                            check_feature_manifest(feature, expected=feature)
+                        self.assertEqual(caught.exception.code, "wrong-feature-manifest")
+                    else:
+                        self.assertIsNone(check_feature_manifest(feature, expected=feature))
+
+    def test_ancestry_identity_utf8_byte_budget(self):
+        for encoding, exact in (("ascii", "a" * 256), ("utf8", "\u00e9" * 128)):
+            for over in (False, True):
+                with self.subTest(encoding=encoding, over=over):
+                    ancestry = [exact + ("x" if over else "")]
+                    oracle = ["independent:oracle"]
+                    if over:
+                        with self.assertRaises(FixtureRejected) as caught:
+                            check_oracle_ancestry(ancestry, oracle)
+                        self.assertEqual(caught.exception.code, "incomplete-oracle-ancestry")
+                    else:
+                        self.assertIsNone(check_oracle_ancestry(ancestry, oracle))
+
+    def test_ancestry_entry_budget(self):
+        for count in (256, 257):
+            with self.subTest(count=count):
+                ancestry = [f"candidate:{i}" for i in range(count)]
+                oracle = ["independent:oracle"]
+                if count == 257:
+                    with self.assertRaises(FixtureRejected) as caught:
+                        check_oracle_ancestry(ancestry, oracle)
+                    self.assertEqual(caught.exception.code, "incomplete-oracle-ancestry")
+                else:
+                    self.assertIsNone(check_oracle_ancestry(ancestry, oracle))
+
     def test_small_pinned_features_and_ancestry_remain_valid_preflight_inputs(self):
         feature = {"filesystem": "test-only", "features": {"snapshots": False}}
         self.assertIsNone(check_feature_manifest(feature, expected=feature))
