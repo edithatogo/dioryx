@@ -39,8 +39,16 @@ class NativeProvenance:
     redistribution_rights: str
 
 
-def _file_identity(info):
-    return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+def _file_identity(info, *, same_accessor=False):
+    identity = (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns)
+    # CPython Windows path stat and fstat may disagree on deprecated ctime.
+    # Compare creation time across accessors; retain ctime within each accessor.
+    # https://github.com/python/cpython/issues/157671
+    if os.name == "nt":
+        identity += (info.st_birthtime_ns,)
+        if not same_accessor:
+            return identity
+    return (*identity, info.st_ctime_ns)
 
 
 def check_fixture_file(path: Path, *, expected_sha256: str, max_bytes: int) -> None:
@@ -90,8 +98,10 @@ def check_fixture_file(path: Path, *, expected_sha256: str, max_bytes: int) -> N
                 digest.update(chunk)
                 remaining -= len(chunk)
             if (
-                _file_identity(os.fstat(descriptor)) != _file_identity(opened)
-                or _file_identity(path.lstat()) != _file_identity(opened)
+                _file_identity(os.fstat(descriptor), same_accessor=True)
+                != _file_identity(opened, same_accessor=True)
+                or _file_identity(path.lstat(), same_accessor=True)
+                != _file_identity(before, same_accessor=True)
             ):
                 raise FixtureRejected("fixture-changed", "The fixture changed while hashing.")
         finally:
@@ -160,11 +170,26 @@ def check_native_provenance(filesystem: str, record: NativeProvenance | None) ->
         )
 
 
+# Input-size limits apply to decoded test/fixture objects, not raw disk images.
+MAX_FEATURE_TEXT_BYTES = 256 * 1024
+MAX_ANCESTRY_ENTRIES = 256
+MAX_ANCESTRY_ID_BYTES = 256
+
+
 def _canonical_features(value) -> str:
     if type(value) is not dict or not value:
         raise ValueError("a nonempty feature object is required")
     pending = [(value, 0)]
     visited = 0
+    remaining_text_bytes = MAX_FEATURE_TEXT_BYTES
+
+    def charge(value: str) -> None:
+        nonlocal remaining_text_bytes
+        if len(value) > remaining_text_bytes:
+            raise ValueError("feature text exceeds byte budget")
+        remaining_text_bytes -= len(value.encode("utf-8"))
+        if remaining_text_bytes < 0:
+            raise ValueError("feature text exceeds byte budget")
     while pending:
         item, depth = pending.pop()
         visited += 1
@@ -173,6 +198,8 @@ def _canonical_features(value) -> str:
         if type(item) is dict:
             if any(not _nonblank(key) for key in item):
                 raise ValueError("feature keys must be nonblank strings")
+            for key in item:
+                charge(key)
             if len(item) > 10000 - visited - len(pending):
                 raise ValueError("feature object exceeds structural limits")
             pending.extend((child, depth + 1) for child in item.values())
@@ -180,7 +207,9 @@ def _canonical_features(value) -> str:
             if len(item) > 10000 - visited - len(pending):
                 raise ValueError("feature object exceeds structural limits")
             pending.extend((child, depth + 1) for child in item)
-        elif type(item) not in (str, int, float, bool, type(None)):
+        elif type(item) is str:
+            charge(item)
+        elif type(item) not in (int, float, bool, type(None)):
             raise ValueError("feature values must be JSON values")
     return json.dumps(value, sort_keys=True, allow_nan=False, separators=(",", ":"))
 
@@ -194,7 +223,7 @@ def check_feature_manifest(actual: dict, *, expected: dict) -> None:
     """
     try:
         matches = _canonical_features(actual) == _canonical_features(expected)
-    except (TypeError, ValueError, RecursionError) as error:
+    except (TypeError, ValueError, RecursionError, UnicodeError) as error:
         raise FixtureRejected(
             "wrong-feature-manifest", "Supply valid pinned feature objects."
         ) from error
@@ -205,11 +234,24 @@ def check_feature_manifest(actual: dict, *, expected: dict) -> None:
         )
 
 
+def _valid_ancestry_identity(value) -> bool:
+    if not _nonblank(value) or value != value.strip():
+        return False
+    if len(value) > MAX_ANCESTRY_ID_BYTES:
+        return False
+    try:
+        return len(value.encode("utf-8")) <= MAX_ANCESTRY_ID_BYTES
+    except UnicodeError:
+        return False
+
+
 def _ancestry(values) -> set[str]:
     if (
         not isinstance(values, (list, tuple, set, frozenset))
         or not values
-        or not all(_nonblank(value) and value == value.strip() for value in values)
+        or len(values) > MAX_ANCESTRY_ENTRIES
+        or not all(_valid_ancestry_identity(value) for value in values)
+        or len(set(values)) != len(values)
     ):
         raise FixtureRejected(
             "incomplete-oracle-ancestry",
@@ -230,3 +272,28 @@ def check_oracle_ancestry(candidate, oracle) -> None:
             "shared-oracle-ancestry",
             "The comparator shares parser ancestry; obtain an independent oracle.",
         )
+
+
+def check_fixture_preflight(
+    *,
+    path: Path,
+    expected_sha256: str,
+    max_bytes: int,
+    filesystem: str,
+    native_provenance: NativeProvenance | None,
+    actual_features: dict,
+    expected_features: dict,
+    candidate_ancestry,
+    oracle_ancestry,
+) -> None:
+    """Run all four local rejection checks; never return an admission decision.
+
+    The caller separately pins the digest and expected features and authorises
+    the stable regular-file path. Native provenance and oracle independence still
+    require source review; an r0 checkpoint must be verified independently.
+    Passing preflight returns None, not acceptance or evidence of execution.
+    """
+    check_fixture_file(path, expected_sha256=expected_sha256, max_bytes=max_bytes)
+    check_native_provenance(filesystem, native_provenance)
+    check_feature_manifest(actual_features, expected=expected_features)
+    check_oracle_ancestry(candidate_ancestry, oracle_ancestry)

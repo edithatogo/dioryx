@@ -30,7 +30,7 @@ Prerequisites: `track-001-workspace-and-core-traits#r0`.
 Files: `tests/fixtures/` manifests, functional `tests/conformance/` validators and
 `tests/conformance/test_evidence.py`; reuse existing baseline fixture recipes.
 
-- [ ] Make missing fixture, bad hash, absent native provenance, wrong feature manifest and shared-oracle ancestry regressions fail before admitting the first fixture. No dependency on complete container or mount work.
+- [~] Make missing fixture, bad hash, absent native provenance, wrong feature manifest and shared-oracle ancestry regressions fail before admitting the first fixture. No dependency on complete container or mount work. PR #3 supplied initial rejection tests; PR #10 adds bounded composite preflight, 52 locally executed synthetic tests and mandatory conformance discovery in G. Exact receiving-tree three-host execution and review remain required; no native admission is implied.
 - [ ] Import small native masters and expected file/metadata oracles; keep original masters immutable and mount/check fresh copies. A downstream host consumes provenance rather than claiming to be its native generator.
 - [ ] Implement minimal versioned evidence tied to source/features/host/view/fault model; never promote advertised or compile-only results. G plus `python3 -m unittest discover -s tests/conformance` and actual native admission are required.
 
