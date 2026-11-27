@@ -46,7 +46,7 @@ class CompositePreflightTests(unittest.TestCase):
     def assertRejected(self, code, **changes):
         with self.assertRaises(FixtureRejected) as caught:
             self.preflight(**changes)
-        self.assertEqual(caught.exception.code, code)
+        self.assertEqual(caught.exception.code, code, str(caught.exception))
 
     def test_preflight_requires_fixture(self):
         self.assertRejected("missing-fixture", path=self.fixture.with_suffix(".missing"))

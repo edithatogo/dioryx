@@ -36,7 +36,7 @@ class EvidenceRejectionTests(unittest.TestCase):
     def rejected(self, code, function, *args, **kwargs):
         with self.assertRaises(FixtureRejected) as raised:
             function(*args, **kwargs)
-        self.assertEqual(raised.exception.code, code)
+        self.assertEqual(raised.exception.code, code, str(raised.exception))
         self.assertTrue(str(raised.exception))
         return raised.exception
 
