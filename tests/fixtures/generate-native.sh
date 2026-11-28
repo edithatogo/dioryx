@@ -2,6 +2,8 @@
 # Only run in a disposable GitHub-hosted runner; no physical-disk arguments.
 set -euo pipefail
 kind=$1
+profile=${2:-baseline}
+case "$profile" in baseline|expanded) ;; *) exit 2 ;; esac
 test "${GITHUB_ACTIONS:-}" = true
 test "${RUNNER_ENVIRONMENT:-}" = github-hosted
 case "$kind:$(uname -s)" in apfs:Darwin|exfat:Linux) ;; *) exit 2 ;; esac
@@ -32,8 +34,8 @@ attach_exfat() {
     test "$(findmnt --mountpoint "$mp" -n -o FSTYPE)" = exfat
     run findmnt --mountpoint "$mp" -J > "$out/$label-mount.json"
 }
-observe() { run python3 tests/conformance/native_oracle.py observe "$mp" > "$out/$1-oracle.json"; }
-populate() { run python3 tests/conformance/native_oracle.py populate "$mp"; }
+observe() { run python3 tests/conformance/native_oracle.py observe "$mp" "$profile" > "$out/$1-oracle.json"; }
+populate() { run python3 tests/conformance/native_oracle.py populate "$mp" "$profile"; }
 assert_unchanged() {
     local image=$1 before=$2 after
     after=$(hashfile "$image")
@@ -41,6 +43,7 @@ assert_unchanged() {
     test "$before" = "$after"
 }
 printf 'schema=dioryx-native-candidate-v1\nrepository=%s\nsource=%s\nrun=%s\nattempt=%s\nkind=%s\nrunner_image=%s\nrunner_image_version=%s\nstatus=candidate-only\nrights=generated from repository-authored synthetic payload; redistribution review pending\n' "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$kind" "${ImageOS:-unknown}" "${ImageVersion:-unknown}" > "$out/provenance.txt"
+printf 'payload_profile=%s\n' "$profile" >> "$out/provenance.txt"
 run uname -a > "$out/host.txt"
 if [ "$kind" = apfs ]; then
     run sw_vers > "$out/os-version.txt"
@@ -53,11 +56,21 @@ if [ "$kind" = apfs ]; then
     before=$(hashfile "$master")
     run hdiutil convert "$master" -format UDZO -o "$out/apfs.dmg"
     assert_unchanged "$master" "$before"
-    for name in apfs.sparseimage apfs.dmg; do
+    images=(apfs.sparseimage apfs.dmg)
+    if [ "$profile" = expanded ]; then
+        run hdiutil convert "$master" -format UDTO -o "$out/apfs-raw.cdr"
+        assert_unchanged "$master" "$before"
+        images+=(apfs-raw.cdr)
+    fi
+    for name in "${images[@]}"; do
         copy="$work/check-$name"
         original=$(hashfile "$out/$name")
         run cp "$out/$name" "$copy"
         if [ "$name" = apfs.dmg ]; then run hdiutil verify "$copy" > "$out/dmg-checker.txt" 2>&1; fi
+        if [ "$name" = apfs-raw.cdr ]; then
+            run gpt -r show "$copy" > "$out/raw-gpt-native.txt"
+            run python3 tests/conformance/native_oracle.py raw-gpt "$copy" "$out/raw-gpt-native.txt" > "$out/raw-gpt-geometry.json"
+        fi
         attach_apfs "$name" "$copy" -readonly
         run diskutil verifyVolume "$mp" > "$out/$name-checker.txt" 2>&1
         observe "$name"
