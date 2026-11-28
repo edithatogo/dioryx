@@ -54,3 +54,40 @@ No raw physical-device access, publication or new dependencies in Cargo.
 - Corrected macOS run also passed; [artifact 15238371676](https://github.com/edithatogo/dioryx/actions/runs/46084151438/artifacts/15238371676), GitHub-reported ZIP SHA-256 `937a21d55351774551a49824840c2e8784004e3633dfd71046dae774c4faaf34` (not independently downloaded; first-run APFS bytes remain the independently checked candidates).
 - Known-answer oracle: empty file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`; 22-byte hello file SHA-256 `c25b540364225542c5597358145ea71cf6427e66f6abc9e382bfc51740de2adc`. Observations are native OS-visible metadata only.
 - Disposition: candidate-only. Retention, rights, independent candidate-parser ancestry, trusted pins and exact accepted checkpoint mapping still required; no native profile admission.
+
+## Independent candidate integrity and retention (28 November)
+
+PR #13 merged at `4e7617496b99165769e62a9cae8d7a8954f708fb` with exact receiving-tree G and independent review.
+The separately checked [candidate pins](candidate-pins.json) bind original
+archive, manifest, image and native oracle digests from runs 46083992900 and
+46084151438. They are not derived from an untrusted archive at verification time.
+
+```bash
+mkdir -p /path/to/private/fixture-store
+python3 tests/conformance/candidate_archive.py apfs /path/to/original-apfs.zip --retain-dir /path/to/private/fixture-store
+python3 tests/conformance/candidate_archive.py exfat /path/to/original-exfat.zip --retain-dir /path/to/private/fixture-store
+```
+
+Both actual archives verified locally: 19 and 13 manifest entries, respectively,
+with all three image/oracle pairs matching. The verifier produces the exact
+`fixture_and_oracle` field shape required by the existing r0 matcher, but no
+checkpoint, accepted review or runtime qualification. It limits compressed and
+expanded sizes and member count, rejects unknown/duplicate/path-like entries,
+does not extract paths, and publishes verified archive bytes under their SHA-256
+names without overwriting an existing object. The caller owns the input/store
+directory; a filesystem without hard links is unsupported. This is not a
+hostile-directory sandbox or a power-loss durability guarantee.
+
+Source review confirms generation used only two repository-authored known-answer
+payloads on fresh disposable images, no personal disks or installed software.
+That supports private candidate retention, not a legal conclusion about
+redistribution. The public repository has no selected licence; retain the
+original archives privately until the owner records a rights decision. No
+binary publication, licence grant or persistent remote storage is claimed.
+The exact copies were staged in the execution environment; the GitHub artifacts
+expire on 27 December UTC. Transfer the verified digest-named objects into an
+authorised durable private store before expiry.
+
+Remaining admission: independent parser ancestry, explicit feature scope
+(including absence/unsupported evidence), reviewed rights and retained store,
+and integrator-reviewed full r0 checkpoint request. No fixture is marked admitted.
