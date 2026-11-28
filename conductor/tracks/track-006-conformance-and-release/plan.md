@@ -7,7 +7,7 @@
 
 ## Global constraints and task cycle
 
-All new work below is pending. Existing directory paths remain stable; the proposed
+Unmarked work below is pending. Existing directory paths remain stable; the proposed
 package names are in [identity](../../../docs/identity.md). No empty packages, new
 public ABI, unqualified writer, mock filesystem evidence or dependency safety waiver.
 
@@ -30,8 +30,8 @@ Prerequisites: `track-001-workspace-and-core-traits#r0`.
 Files: `tests/fixtures/` manifests, functional `tests/conformance/` validators and
 `tests/conformance/test_evidence.py`; reuse existing baseline fixture recipes.
 
-- [~] Make missing fixture, bad hash, absent native provenance, wrong feature manifest and shared-oracle ancestry regressions fail before admitting the first fixture. No dependency on complete container or mount work. PR #3 supplied initial rejection tests; PR #10 adds bounded composite preflight, 52 locally executed synthetic tests and mandatory conformance discovery in G. Exact receiving-tree three-host execution and review remain required; no native admission is implied.
-- [ ] Import small native masters and expected file/metadata oracles; keep original masters immutable and mount/check fresh copies. A downstream host consumes provenance rather than claiming to be its native generator.
+- [x] Make missing fixture, bad hash, absent native provenance, wrong feature manifest and shared-oracle ancestry regressions fail before admitting the first fixture. PR #10 merged at `259a822b56008d2c0de05d5cd4a026f81a5bbef9`; [exact merge-tree G](https://github.com/edithatogo/dioryx/actions/runs/46083930742) and [post-merge G](https://github.com/edithatogo/dioryx/actions/runs/46084058994) passed with 53 conformance tests on each of three hosts and independent review. No native admission is implied.
+- [~] Import small native masters and expected file/metadata oracles; keep original masters immutable and mount/check fresh copies. A downstream host consumes provenance rather than claiming to be its native generator. PR #13 acquired genuine baseline candidates; see [receipts](../../../tests/fixtures/native-acquisition.md). Durable retained corpus, required feature coverage, reviewed rights and accepted qualification remain outstanding.
 - [ ] Implement minimal versioned evidence tied to source/features/host/view/fault model; never promote advertised or compile-only results. G plus `python3 -m unittest discover -s tests/conformance` and actual native admission are required.
 
 ## p2 — Image-worker isolation by host
