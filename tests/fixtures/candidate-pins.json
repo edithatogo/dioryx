@@ -1,0 +1,76 @@
+{
+  "candidates": {
+    "apfs": {
+      "archive_sha256": "288eb3f8420a01bbe1c0570f407ede150f761151093a1a526694e7bf9263f4ed",
+      "artifact": 15238416929,
+      "images": {
+        "apfs.dmg": {
+          "fixture_sha256": "ae1ff5226dad4bba212b68e9c61ddb7f46304339ddfb7b73f9ad341a43133927",
+          "oracle_member": "apfs.dmg-oracle.json",
+          "oracle_sha256": "544e5f138e413f1c36c632bcdcf62c90c51886dd723b238f003a2bcea78ac860"
+        },
+        "apfs.sparseimage": {
+          "fixture_sha256": "cd3b9d47648170d771456ae061ecb4e4ac57ef2cc3f8659fa6ea16b4056d24ae",
+          "oracle_member": "apfs.sparseimage-oracle.json",
+          "oracle_sha256": "544e5f138e413f1c36c632bcdcf62c90c51886dd723b238f003a2bcea78ac860"
+        }
+      },
+      "manifest_sha256": "03b0bfb9353ce20bea339b31dd8a2d26035e4ba06245cf2825866aac71ded32a",
+      "run": 46083992900,
+      "source": "a800a4bab081d894f60c12d0a687c7f72b27375f"
+    },
+    "apfs-expanded": {
+      "archive_sha256": "af6bd48552328827ad03a0bcca9ba8f966baa88d0bd588721cb0c7db6dd8bc86",
+      "artifact": 15240991891,
+      "images": {
+        "apfs-raw.cdr": {
+          "fixture_sha256": "73fcddcba062325184c05c8f5776c6995b959a852137e4049923513c0b3eb044",
+          "oracle_member": "apfs-raw.cdr-oracle.json",
+          "oracle_sha256": "d167d0e173cc33013fce7645d750a8532f71bab313412c4f60a73fcdd269f755"
+        },
+        "apfs.dmg": {
+          "fixture_sha256": "4945881e75673d5ac014c4d75c91007b933a9b3a36a577415294c06953ebf98c",
+          "oracle_member": "apfs.dmg-oracle.json",
+          "oracle_sha256": "d167d0e173cc33013fce7645d750a8532f71bab313412c4f60a73fcdd269f755"
+        },
+        "apfs.sparseimage": {
+          "fixture_sha256": "b83d98953c4c32b8426f2b725b5602f8074291726d8473abc3a865ebb22e26d3",
+          "oracle_member": "apfs.sparseimage-oracle.json",
+          "oracle_sha256": "d167d0e173cc33013fce7645d750a8532f71bab313412c4f60a73fcdd269f755"
+        }
+      },
+      "manifest_sha256": "f3b5d162de0a8a88c5f9ef465e259cb0d149c0d1b5cd8e57532f87af61ac09bf",
+      "run": 46090612295,
+      "source": "756b433d43899b60096174cd2c0f06554a4c0947"
+    },
+    "exfat": {
+      "archive_sha256": "8ef779a36bbe57c0042e33ec7d5dddec1f8201b801d0e150c2fd2eee4efcbd8a",
+      "artifact": 15238636193,
+      "images": {
+        "exfat.img": {
+          "fixture_sha256": "05fb6afe56f2f26478a0a97525887fedfc5bf9dd2f6863c71a8a436b0d1c79d7",
+          "oracle_member": "exfat-oracle.json",
+          "oracle_sha256": "b8714654a4de729895b87132967b17b7026bc9361eba430d7444ba0bb0a3e008"
+        }
+      },
+      "manifest_sha256": "1ad8cd7fe932bb850672fcf691d2f28b2f3ac8f361047608561a51e6a67a13c7",
+      "run": 46084151438,
+      "source": "a1c1619168d77913c8f24b855d6dff3fb0e44938"
+    },
+    "exfat-expanded": {
+      "archive_sha256": "2348a9cc932604a7ef31d515c23721090f1706d402f73b2a725a5b824f5138f6",
+      "artifact": 15241215522,
+      "images": {
+        "exfat.img": {
+          "fixture_sha256": "d034e0b716a5b6240cfbf0485dbca64e33b317f68f1ffb5f5e0cef106fb11ce3",
+          "oracle_member": "exfat-oracle.json",
+          "oracle_sha256": "88d98d6da09487b8fd14fd4ca3d635c3da217c8ad5c20d289071fecc5ce50bfb"
+        }
+      },
+      "manifest_sha256": "264a4870ffb0e7b47e52a8fb91805e20199e9c134d05a376c6f037413864a245",
+      "run": 46090612295,
+      "source": "756b433d43899b60096174cd2c0f06554a4c0947"
+    }
+  },
+  "schema_version": 1
+}

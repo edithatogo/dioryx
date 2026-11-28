@@ -54,3 +54,78 @@ No raw physical-device access, publication or new dependencies in Cargo.
 - Corrected macOS run also passed; [artifact 15238371676](https://github.com/edithatogo/dioryx/actions/runs/46084151438/artifacts/15238371676), GitHub-reported ZIP SHA-256 `937a21d55351774551a49824840c2e8784004e3633dfd71046dae774c4faaf34` (not independently downloaded; first-run APFS bytes remain the independently checked candidates).
 - Known-answer oracle: empty file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`; 22-byte hello file SHA-256 `c25b540364225542c5597358145ea71cf6427e66f6abc9e382bfc51740de2adc`. Observations are native OS-visible metadata only.
 - Disposition: candidate-only. Retention, rights, independent candidate-parser ancestry, trusted pins and exact accepted checkpoint mapping still required; no native profile admission.
+
+## Independent candidate integrity and retention (28 November)
+
+PR #13 merged at `4e7617496b99165769e62a9cae8d7a8954f708fb` with exact receiving-tree G and independent review.
+The separately checked [candidate pins](candidate-pins.json) bind original
+archive, manifest, image and native oracle digests from runs 46083992900 and
+46084151438. They are not derived from an untrusted archive at verification time.
+
+```bash
+mkdir -p /path/to/private/fixture-store
+python3 tests/conformance/candidate_archive.py apfs /path/to/original-apfs.zip --retain-dir /path/to/private/fixture-store
+python3 tests/conformance/candidate_archive.py exfat /path/to/original-exfat.zip --retain-dir /path/to/private/fixture-store
+```
+
+Both actual archives verified locally: 19 and 13 manifest entries, respectively,
+with all three image/oracle pairs matching. The verifier produces the exact
+`fixture_and_oracle` field shape required by the existing r0 matcher, but no
+checkpoint, accepted review or runtime qualification. It limits compressed and
+expanded sizes and member count, rejects unknown/duplicate/path-like entries,
+does not extract paths, and publishes verified archive bytes under their SHA-256
+names without overwriting an existing object. The caller owns the input/store
+directory; a filesystem without hard links is unsupported. This is not a
+hostile-directory sandbox or a power-loss durability guarantee.
+
+Source review confirms generation used only two repository-authored known-answer
+payloads on fresh disposable images, no personal disks or installed software.
+That supports private candidate retention, not a legal conclusion about
+redistribution. The public repository has no selected licence; retain the
+original archives privately until the owner records a rights decision. No
+binary publication, licence grant or persistent remote storage is claimed.
+The exact copies were staged in the execution environment; the GitHub artifacts
+expire on 27 December UTC. Transfer the verified digest-named objects into an
+authorised durable private store before expiry.
+
+Remaining admission: independent parser ancestry, explicit feature scope
+(including absence/unsupported evidence), reviewed rights and retained store,
+and integrator-reviewed full r0 checkpoint request. No fixture is marked admitted.
+
+## Expanded native candidate acquisition
+
+Source `756b433d43899b60096174cd2c0f06554a4c0947`, [native run 46090612295](https://github.com/edithatogo/dioryx/actions/runs/46090612295):
+both hosted native lanes passed. The native macOS UDTO conversion produced a
+268435456-byte raw disk image. Native `gpt -r show` on a disposable regular-file
+copy reported primary and backup GPT, one APFS partition at LBA 40 with 524208
+512-byte sectors (offset 20480, length 268394496). Both GPT signatures and the
+NXSB signature at the native offset were cross-checked; this does not replace
+the later full GPT CRC/overlap validator. Native read-only mounted checkers
+and preservation hashes passed for raw, sparseimage, DMG and exFAT.
+Six known-answer files per filesystem include an empty file, 22-byte text,
+Unicode U+4E2D filename and 4095/4096/4097-byte boundaries; observed OS names
+and hashes matched. No snapshot, compression, fragmentation or malformed
+filesystem consumer qualification is claimed.
+
+- [Expanded APFS artifact 15240991891](https://github.com/edithatogo/dioryx/actions/runs/46090612295/artifacts/15240991891):
+  ZIP SHA-256 `af6bd48552328827ad03a0bcca9ba8f966baa88d0bd588721cb0c7db6dd8bc86`,
+  26 manifest entries independently verified, raw SHA-256
+  `73fcddcba062325184c05c8f5776c6995b959a852137e4049923513c0b3eb044`.
+- [Expanded exFAT artifact 15241215522](https://github.com/edithatogo/dioryx/actions/runs/46090612295/artifacts/15241215522):
+  ZIP SHA-256 `2348a9cc932604a7ef31d515c23721090f1706d402f73b2a725a5b824f5138f6`,
+  13 manifest entries independently verified, raw SHA-256
+  `d034e0b716a5b6240cfbf0485dbca64e33b317f68f1ffb5f5e0cef106fb11ce3`.
+
+Added expanded entries to candidate-pins.json, retaining original baselines.
+Actual expanded ZIPs were independently verified and stored by digest locally
+through candidate_archive.py with `apfs-expanded` and `exfat-expanded`.
+GitHub artifact expiry 28 December 00:57 UTC; no public binary upload or
+durable remote-store claim. Rights screen: exfatprogs is GPL-2.0 (see
+https://github.com/exfatprogs/exfatprogs); GPL program output is not automatically
+covered unless it copies protected program content (see
+https://www.gnu.org/licenses/gpl-faq.html#WhatCaseIsOutputGPL). Native payloads
+are generated from repository-authored data, not installed software.
+The applicable Apple software terms are at https://www.apple.com/legal/sla/.
+No final redistribution grant or licence has been selected. Preserve private
+candidate retention and require explicit owner rights disposition. The full
+accepted r0 checkpoint mapping and selected parser ancestry remain outstanding.
