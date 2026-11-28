@@ -1,12 +1,13 @@
 name: Native fixture candidates
 on:
   push:
-    branches: [fixture/track006-native-acquisition-20261128]
+    branches: [fixture/track006-native-expanded-20261128]
     paths:
       - '.github/workflows/native-fixtures.yml'
       - 'tests/fixtures/generate-native.sh'
       - 'tests/conformance/native_oracle.py'
       - 'tests/conformance/test_native_oracle.py'
+      - 'tests/conformance/test_native_expanded.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -35,7 +36,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Check known-answer oracle
-        run: python3 -m unittest discover -s tests/conformance -p test_native_oracle.py -v
+        run: python3 -m unittest discover -s tests/conformance -p 'test_native*.py' -v
       - name: Install native exFAT formatter if missing
         if: matrix.kind == 'exfat'
         run: |
@@ -45,7 +46,7 @@ jobs:
           fi
       - name: Generate and independently read back disposable fixture
         shell: bash
-        run: bash tests/fixtures/generate-native.sh '${{ matrix.kind }}'
+        run: bash tests/fixtures/generate-native.sh '${{ matrix.kind }}' expanded
       - name: Retain candidate images and actual provenance
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

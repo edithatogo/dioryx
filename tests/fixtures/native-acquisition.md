@@ -91,3 +91,41 @@ authorised durable private store before expiry.
 Remaining admission: independent parser ancestry, explicit feature scope
 (including absence/unsupported evidence), reviewed rights and retained store,
 and integrator-reviewed full r0 checkpoint request. No fixture is marked admitted.
+
+## Expanded native candidate acquisition
+
+Source `756b433d43899b60096174cd2c0f06554a4c0947`, [native run 46090612295](https://github.com/edithatogo/dioryx/actions/runs/46090612295):
+both hosted native lanes passed. The native macOS UDTO conversion produced a
+268435456-byte raw disk image. Native `gpt -r show` on a disposable regular-file
+copy reported primary and backup GPT, one APFS partition at LBA 40 with 524208
+512-byte sectors (offset 20480, length 268394496). Both GPT signatures and the
+NXSB signature at the native offset were cross-checked; this does not replace
+the later full GPT CRC/overlap validator. Native read-only mounted checkers
+and preservation hashes passed for raw, sparseimage, DMG and exFAT.
+Six known-answer files per filesystem include an empty file, 22-byte text,
+Unicode U+4E2D filename and 4095/4096/4097-byte boundaries; observed OS names
+and hashes matched. No snapshot, compression, fragmentation or malformed
+filesystem consumer qualification is claimed.
+
+- [Expanded APFS artifact 15240991891](https://github.com/edithatogo/dioryx/actions/runs/46090612295/artifacts/15240991891):
+  ZIP SHA-256 `af6bd48552328827ad03a0bcca9ba8f966baa88d0bd588721cb0c7db6dd8bc86`,
+  26 manifest entries independently verified, raw SHA-256
+  `73fcddcba062325184c05c8f5776c6995b959a852137e4049923513c0b3eb044`.
+- [Expanded exFAT artifact 15241215522](https://github.com/edithatogo/dioryx/actions/runs/46090612295/artifacts/15241215522):
+  ZIP SHA-256 `2348a9cc932604a7ef31d515c23721090f1706d402f73b2a725a5b824f5138f6`,
+  13 manifest entries independently verified, raw SHA-256
+  `d034e0b716a5b6240cfbf0485dbca64e33b317f68f1ffb5f5e0cef106fb11ce3`.
+
+Added expanded entries to candidate-pins.json, retaining original baselines.
+Actual expanded ZIPs were independently verified and stored by digest locally
+through candidate_archive.py with `apfs-expanded` and `exfat-expanded`.
+GitHub artifact expiry 28 December 00:57 UTC; no public binary upload or
+durable remote-store claim. Rights screen: exfatprogs is GPL-2.0 (see
+https://github.com/exfatprogs/exfatprogs); GPL program output is not automatically
+covered unless it copies protected program content (see
+https://www.gnu.org/licenses/gpl-faq.html#WhatCaseIsOutputGPL). Native payloads
+are generated from repository-authored data, not installed software.
+The applicable Apple software terms are at https://www.apple.com/legal/sla/.
+No final redistribution grant or licence has been selected. Preserve private
+candidate retention and require explicit owner rights disposition. The full
+accepted r0 checkpoint mapping and selected parser ancestry remain outstanding.

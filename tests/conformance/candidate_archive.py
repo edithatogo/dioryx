@@ -97,14 +97,14 @@ def retain_candidate(data, pin, root):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('kind', choices=('apfs', 'exfat'))
-    parser.add_argument('archive', type=Path)
-    parser.add_argument('--retain-dir', type=Path)
-    args = parser.parse_args()
     pins = json.loads((Path(__file__).resolve().parents[1] / 'fixtures' /
                        'candidate-pins.json').read_text(encoding='utf-8'))
     if pins['schema_version'] != 1:
         raise ValueError('Unsupported candidate pin schema')
+    parser.add_argument('kind', choices=tuple(pins['candidates']))
+    parser.add_argument('archive', type=Path)
+    parser.add_argument('--retain-dir', type=Path)
+    args = parser.parse_args()
     data, pin = read_archive(args.archive), pins['candidates'][args.kind]
     result = verify_candidate(data, pin)
     if args.retain_dir:
